@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+<title>2026 Hokkaido</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#F7E8DA">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"></script>
+<style>
+  :root{
+    /* Fjord Glass template — same glass palette as the Iceland app, with an autumn-foliage accent for Hokkaido */
+    --bg-1:#EDCDB4; --bg-2:#F7E8DA;
+    --glass:rgba(255,255,255,0.55); --glass-strong:rgba(255,255,255,0.74); --glass-hi:rgba(255,255,255,0.4);
+    --card:var(--glass); --card-2:rgba(255,255,255,0.36);
+    --ink:#33211B; --ink-2:#71574B; --ink-3:#A68B7D;
+    --border:rgba(90,40,20,0.07);
+    --gold:#C4581F; --gold-bg:rgba(196,88,31,0.13); --gold-line:#DB7A3A;
+    --teal:#A3321F; --teal-bg:rgba(163,50,31,0.11);
+    --red:#AE4B3D; --red-bg:rgba(174,75,61,0.11);
+    --amber:#9C7420; --amber-bg:rgba(156,116,32,0.13);
+    --green:#3C7A56; --green-bg:rgba(60,122,86,0.12);
+    --aurora:linear-gradient(90deg,#C4502F,#D98A2B,#E3B341);
+    --radius:20px; --radius-sm:13px;
+    --shadow:0 1px 1px rgba(90,35,15,0.03), 0 10px 26px -14px rgba(120,45,20,0.20);
+  }
+  *{box-sizing:border-box}
+  html{background:#F7E8DA}
+  body{margin:0;min-height:100vh;background:linear-gradient(160deg,var(--bg-1),var(--bg-2) 55%,#F3DCC6);background-attachment:fixed;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,.disp{font-family:"Space Grotesk",sans-serif}
+  .mono{font-family:"Space Mono",monospace}
+  #app{max-width:560px;margin:0 auto;padding-bottom:calc(96px + env(safe-area-inset-bottom, 0px))}
+  header.top{padding:0 18px;height:env(safe-area-inset-top, 12px)}
+  header.top h1{font-size:20px;font-weight:700;margin:0 0 3px;letter-spacing:-0.01em}
+  header.top p{font-size:13px;color:var(--ink-2);margin:0}
+  section{padding:0 16px}
+  .chips{display:flex;gap:8px;overflow-x:auto;padding:14px 16px 4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
+  .chips::-webkit-scrollbar{display:none;width:0;height:0}
+  #infoSubTabs{position:fixed;left:0;right:0;bottom:var(--tabbar-h, 72px);z-index:19;max-width:560px;margin:0 auto;padding:10px 16px 12px;background:linear-gradient(0deg, var(--bg-2) 0%, var(--bg-2) 72%, rgba(247,232,218,0) 100%);backdrop-filter:blur(12px) saturate(150%);-webkit-backdrop-filter:blur(12px) saturate(150%)}
+  #view-info{padding-bottom:64px}
+  .chip{flex-shrink:0;padding:8px 15px;border-radius:999px;border:1px solid var(--border);border-top-color:var(--glass-hi);background:var(--glass);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);font-size:14px;font-weight:500;color:var(--ink-2);cursor:pointer;white-space:nowrap;transition:transform .15s ease}
+  .chip.active{background:var(--ink);color:var(--bg-2);border-color:var(--ink)}
+  .dayHero{display:flex;align-items:stretch;gap:14px;margin:0;padding:10px 16px 8px;min-height:80px;position:sticky;top:env(safe-area-inset-top, 0px);z-index:20;background:linear-gradient(180deg, var(--bg-2) 0%, var(--bg-2) 82%, rgba(247,232,218,0) 100%);backdrop-filter:blur(12px) saturate(150%);-webkit-backdrop-filter:blur(12px) saturate(150%)}
+  .dayHero::before{content:'';position:absolute;left:0;right:0;bottom:100%;height:env(safe-area-inset-top, 0px);background:var(--bg-2);backdrop-filter:blur(12px) saturate(150%);-webkit-backdrop-filter:blur(12px) saturate(150%)}
+  .dayHeroLabelWrap{display:flex;align-items:center;gap:6px;flex-shrink:0}
+  .dayHeroLabelCol{display:flex;flex-direction:column}
+  .dayHeroDate{font-family:"Space Mono",monospace;font-size:12px;color:var(--ink-3);margin-top:1px}
+  .dayHeroRoute{font-size:14px;font-weight:600;color:var(--ink)}
+  .dayHeroDrive{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+  .dayHeroLabel{font-family:"Space Grotesk",sans-serif;font-size:44px;font-weight:700;line-height:1;display:flex;align-items:center;letter-spacing:-0.01em}
+  .dayHeroArrows{display:flex;flex-direction:column;gap:2px;align-self:center}
+  .dayArrowBtn{background:none;border:none;color:var(--ink-3);font-size:9px;padding:2px 4px;cursor:pointer;line-height:1}
+  .dayArrowBtn:active{color:var(--ink)}
+  .dayArrowBtn:disabled{opacity:0.25;cursor:default}
+  .dayHeroWeather{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:7px;border-left:1px solid var(--border);padding-left:14px}
+  .heroWxRow{display:flex;align-items:baseline;gap:8px}
+  .heroWxIcon{font-size:28px;line-height:1}
+  .heroWxTemp{font-family:"Space Mono",monospace;font-size:25px;font-weight:700}
+  .heroWxCond{font-size:15px;color:var(--ink-2)}
+  .heroWxSun{font-size:14px;color:var(--ink-3)}
+  .heroWxGrid{display:flex;justify-content:space-between;gap:10px;padding-right:6px}
+  .heroWxStat{text-align:left;font-size:14px;color:var(--ink-2);font-weight:600}
+  .heroWxMsg{font-size:12px;color:var(--ink-3)}
+  #itemList{user-select:none;-webkit-user-select:none}
+  #itemList img{-webkit-user-drag:none;user-drag:none}
+  .item{background:var(--glass);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border:1px solid var(--border);border-top-color:var(--glass-hi);box-shadow:var(--shadow);border-radius:var(--radius);padding:14px 15px;margin:0 0 10px;display:flex;gap:12px;align-items:flex-start;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .item.item-transit{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;border-color:transparent;box-shadow:none;padding:8px 15px}
+  .item.item-transit .ttl{font-size:15px;font-weight:600;color:#000}
+  .item.item-transit .itemIcon{font-size:17px;opacity:0.7}
+  .item.item-transit .itemChevron{opacity:0.4}
+  .item.item-transit .time{font-size:14px;font-weight:700;color:#000}
+  .item.item-photo{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;border-color:transparent;box-shadow:none;padding:8px 15px}
+  .item.item-photo .ttl{font-size:15px;font-weight:600;font-style:italic;color:var(--gold)}
+  .item.item-photo .itemChevron{opacity:0.4}
+  .item.item-photo .time{font-size:14px;font-weight:700;color:var(--gold);opacity:0.85}
+  .item:active{transform:scale(0.99)}
+  .item .itemIcon{font-size:17px;line-height:22px;flex-shrink:0}
+  .item .time{font-family:"Space Mono",monospace;font-size:14px;font-weight:700;line-height:22px;width:46px;flex-shrink:0}
+  .item .body{flex:1;min-width:0}
+  .item .ttl{font-size:15px;line-height:22px;font-weight:600}
+  .item .meta{font-size:12.5px;color:var(--ink-2);margin-top:2px}
+  .blurb{font-size:12.5px;color:var(--ink-2);margin-top:6px;line-height:1.6}
+  .note{font-size:12.5px;color:var(--ink-2);margin-top:6px;font-style:italic}
+  .thumb{max-width:120px;max-height:120px;border-radius:var(--radius-sm);margin-top:8px;display:block;border:1px solid var(--border)}
+  .mapLinks{display:flex;gap:16px;margin-top:6px}
+  .mapLinksMissing{font-size:12px;color:var(--ink-3);font-style:italic}
+  .mapLinks a{font-size:12px;color:var(--teal);text-decoration:none;font-weight:600}
+  .locPhoto{border-radius:var(--radius);overflow:hidden;margin-bottom:12px;border:1px solid var(--border)}
+  .locPhoto img{width:100%;height:260px;object-fit:cover;display:block}
+  .locPhotoCredit{display:block;font-size:10.5px;color:var(--ink-3);text-align:right;padding:5px 4px 0;text-decoration:none;background:var(--card-2)}
+  .itemChevron{color:var(--ink-3);font-size:20px;font-weight:400;align-self:center;flex-shrink:0;padding-left:2px}
+  .addrow{display:flex;justify-content:center;margin:6px 0 18px}
+  .btn{font-family:inherit;font-size:14px;font-weight:600;padding:11px 20px;border-radius:999px;border:1px solid var(--border);border-top-color:var(--glass-hi);background:var(--glass-strong);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);color:var(--ink);cursor:pointer}
+  .btn.primary{background:var(--ink);color:var(--bg-2);border-color:var(--ink)}
+  .btn.ghost{background:none;border:none;backdrop-filter:none;-webkit-backdrop-filter:none;color:var(--teal);text-decoration:underline;font-size:13px}
+  .btn.danger{color:var(--red);border-color:var(--red-bg);margin-right:auto}
+  form.itemForm{background:var(--glass-strong);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);border:1px solid var(--border);border-top-color:var(--glass-hi);box-shadow:var(--shadow);border-radius:var(--radius);padding:16px;margin:0 0 18px;display:flex;flex-direction:column;gap:11px}
+  form.itemForm label{font-size:12px;color:var(--ink-2);display:block;margin-bottom:3px}
+  form.itemForm input,form.itemForm select,form.itemForm textarea{width:100%;font-family:inherit;font-size:14px;padding:10px 11px;border-radius:var(--radius-sm);border:1px solid var(--border);background:rgba(255,255,255,0.5);color:var(--ink)}
+  .formRow{display:flex;gap:10px}
+  .formRow>div{flex:1}
+  .formActions{display:flex;gap:8px;justify-content:flex-end}
+  .check{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2)}
+  .photoPreview{margin-top:8px;position:relative;display:inline-block}
+  .photoPreview img{max-width:150px;max-height:150px;border-radius:var(--radius-sm);display:block;border:1px solid var(--border)}
+  .photoPreview .rmBtn{position:absolute;top:-8px;right:-8px;background:var(--red);color:#fff;border:none;border-radius:999px;width:22px;height:22px;font-size:12px;line-height:1;cursor:pointer}
+  .resultGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+  .stat{background:var(--glass);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--border);border-top-color:var(--glass-hi);border-radius:var(--radius);padding:12px 14px}
+  .stat .lbl{font-size:12px;color:var(--ink-2)}
+  .stat .val{font-family:"Space Mono",monospace;font-size:19px;font-weight:700;margin-top:2px}
+  .stat.gold .val{color:var(--gold)}
+  .stat.teal .val{color:var(--teal)}
+  .weatherHead{display:flex;align-items:center;gap:14px;background:var(--glass-strong);backdrop-filter:blur(22px) saturate(170%);-webkit-backdrop-filter:blur(22px) saturate(170%);border:1px solid var(--border);border-top-color:var(--glass-hi);box-shadow:var(--shadow);border-radius:var(--radius);padding:19px;margin-top:14px}
+  .weatherHead .icon{font-size:44px;line-height:1;flex-shrink:0}
+  .weatherHead .whMain{flex:1;min-width:0}
+  .weatherHead .cond{font-size:17px;font-weight:700}
+  .weatherHead .whSub{font-size:12.5px;color:var(--ink-2);margin-top:3px}
+  .weatherHead .whTemp{font-family:"Space Mono",monospace;font-size:34px;font-weight:700;flex-shrink:0}
+  .dateLabel{font-size:13px;font-weight:600;color:var(--ink-2);margin:20px 0 2px}
+  .sunRow{display:flex;gap:22px;background:var(--glass);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--border);border-top-color:var(--glass-hi);border-radius:var(--radius);padding:12px 14px;margin-top:12px;font-size:14px}
+  .auroraBox{background:var(--glass);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--border);border-top-color:var(--glass-hi);border-radius:var(--radius);padding:14px;margin-top:12px}
+  .auroraBox .lbl{font-size:12px;color:var(--ink-2)}
+  .auroraBox .val{font-family:"Space Mono",monospace;font-size:19px;font-weight:700;margin-top:2px}
+  .auroraBox .sub{font-size:11.5px;color:var(--ink-3);margin-top:6px;line-height:1.5}
+  .auroraBox a{color:var(--teal);font-size:12px}
+  .vedurBox{background:var(--glass);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--border);border-top-color:var(--glass-hi);border-radius:var(--radius);padding:14px;margin-top:12px}
+  .vedurBox .lbl{font-size:12px;color:var(--ink-2)}
+  .vedurBox .val{font-family:"Space Mono",monospace;font-size:16px;font-weight:700;margin-top:4px}
+  .vedurBox .sub{font-size:11.5px;color:var(--ink-3);margin-top:6px;line-height:1.5}
+  .vedurBox a{color:var(--teal);font-size:12px}
+  .weatherGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+  .weatherGrid .stat .val{font-size:17px}
+  .windArrow{font-size:18px;font-weight:900}
+  .weatherMsg{padding:22px 8px;text-align:center;color:var(--ink-2);font-size:13.5px;line-height:1.6}
+  .weatherMsg .sub{font-size:12px;color:var(--ink-3);margin-top:4px}
+  #tabbar{position:fixed;left:0;right:0;bottom:0;display:flex;gap:2px;max-width:560px;margin:0 auto;padding:7px 10px calc(7px + env(safe-area-inset-bottom, 0px));border-radius:24px 24px 0 0;background:rgba(240,213,192,0.94);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);border:1px solid var(--border);border-bottom:none;border-top-color:var(--glass-hi);box-shadow:0 -2px 24px -8px rgba(120,45,20,0.25);isolation:isolate;overflow:hidden}
+  .splitPeople{display:flex;gap:8px;flex-wrap:wrap;padding:14px 0}
+  .splitTotal{font-size:14px;color:var(--ink-2);margin-bottom:10px}
+  .splitTotal .mono{font-family:"Space Mono",monospace;font-weight:700;font-size:17px;color:var(--ink)}
+  .balanceGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .balanceCard{background:var(--glass);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--border);border-top-color:var(--glass-hi);border-radius:var(--radius);padding:12px 14px}
+  .balanceName{font-size:12.5px;color:var(--ink-2)}
+  .balanceVal{font-family:"Space Mono",monospace;font-size:19px;font-weight:700;margin-top:2px}
+  .balanceVal.pos{color:var(--green)}
+  .balanceVal.neg{color:var(--red)}
+  .settleBox{margin:14px 0 0;background:var(--glass);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--border);border-top-color:var(--glass-hi);border-radius:var(--radius);padding:14px}
+  .settleTitle{font-size:12.5px;color:var(--ink-2);margin-bottom:6px;font-weight:600}
+  .settleLine{font-size:14px;padding:4px 0}
+  .settleLine .mono{font-family:"Space Mono",monospace;font-weight:700}
+  .expenseItem{display:flex;align-items:center;gap:10px;background:var(--glass);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--border);border-top-color:var(--glass-hi);border-radius:var(--radius);padding:12px 14px;margin:0 0 10px}
+  .expenseMain{flex:1;min-width:0}
+  .expenseDesc{font-size:14.5px;font-weight:600}
+  .expenseMeta{font-size:12px;color:var(--ink-2);margin-top:2px}
+  .expenseAmt{font-size:16px;font-weight:700}
+  .splitCheckRow{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+  .appCard{background:var(--glass);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--border);border-top-color:var(--glass-hi);border-radius:var(--radius);padding:14px;margin:0 0 10px}
+  .appName{font-size:15px;font-weight:700}
+  .appDesc{font-size:12.5px;color:var(--ink-2);margin-top:3px;line-height:1.5}
+  .appCatLabel{font-size:13px;font-weight:700;color:var(--ink-2);margin:18px 0 8px}
+  .appCatLabel:first-child{margin-top:4px}
+  .marketTableWrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius);border:1px solid var(--border);border-top-color:var(--glass-hi);background:var(--glass);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%)}
+  .marketTable{border-collapse:collapse;width:100%;min-width:520px;font-size:12.5px}
+  .marketTable th{text-align:left;padding:10px 12px;font-size:12px;color:var(--ink-2);border-bottom:1px solid var(--border);white-space:nowrap}
+  .marketTable td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--ink-2);vertical-align:top;line-height:1.5}
+  .marketTable td:first-child{font-weight:700;color:var(--ink);white-space:nowrap}
+  .marketTable tr:last-child td{border-bottom:none}
+  .marketBuyGroup{background:var(--glass);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--border);border-top-color:var(--glass-hi);border-radius:var(--radius);padding:13px 14px;margin:0 0 10px}
+  .marketBuyCat{font-size:14px;font-weight:700;display:flex;align-items:baseline;gap:8px}
+  .marketBuyStore{font-size:11px;font-weight:500;color:var(--teal);background:var(--teal-bg);padding:2px 8px;border-radius:999px}
+  .marketBuyItems{font-size:12.5px;color:var(--ink-2);margin-top:6px;line-height:1.6}
+  .recipeCard{background:var(--glass);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border:1px solid var(--border);border-top-color:var(--glass-hi);border-radius:var(--radius);padding:14px;margin:0 0 10px}
+  .recipeName{font-size:15px;font-weight:700;display:flex;align-items:baseline;gap:8px}
+  .recipeTime{font-size:11px;font-weight:500;color:var(--ink-3)}
+  .recipeSection{font-size:12.5px;color:var(--ink-2);margin-top:8px;line-height:1.6}
+  .recipeSection b{display:block;font-size:11px;color:var(--ink-3);font-weight:600;margin-bottom:2px}
+  .recipeSection ol{margin:2px 0 0;padding-left:18px}
+  .recipeSection li{margin-bottom:2px}
+  #tabbar::before{content:'';display:none}
+  .tabbtn{flex:1;background:none;border:none;font-family:inherit;font-size:12.5px;color:rgba(51,33,27,0.62);display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 4px;border-radius:17px;cursor:pointer;transition:background .15s ease,color .15s ease}
+  .tabbtn .ic{font-size:19px}
+  .tabbtn.active{color:var(--ink);background:rgba(255,255,255,0.5)}
+  [hidden]{display:none!important}
+  #splashScreen{position:fixed;inset:0;z-index:9999;background:#0B0F11;overflow:hidden;transition:opacity .6s ease}
+  #splashScreen.fade-out{opacity:0;pointer-events:none}
+  #splashScreen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  #splashScreen .splashGradient{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,14,16,0) 38%,rgba(10,14,16,0.88) 100%)}
+  #splashScreen .splashContent{position:absolute;left:0;right:0;bottom:0;padding:0 24px 52px;color:#fff;text-align:center}
+  #splashScreen .splashTitle{font-family:"Space Grotesk",sans-serif;font-size:27px;font-weight:700;letter-spacing:0.03em;text-shadow:0 2px 14px rgba(0,0,0,0.4)}
+  #splashScreen .splashSub{font-size:12px;color:rgba(255,255,255,0.72);margin-top:6px;letter-spacing:0.08em}
+  #splashScreen .splashDots{display:flex;gap:6px;justify-content:center;margin-top:24px}
+  #splashScreen .splashDots span{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.85);animation:splashPulse 1.2s ease-in-out infinite}
+  #splashScreen .splashDots span:nth-child(2){animation-delay:.15s}
+  #splashScreen .splashDots span:nth-child(3){animation-delay:.3s}
+  @keyframes splashPulse{0%,80%,100%{opacity:.25;transform:scale(0.8)}40%{opacity:1;transform:scale(1)}}
+</style>
+</head>
+<body>
+<div id="splashScreen">
+  <svg viewBox="0 0 400 800" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1B2433"/><stop offset=".45" stop-color="#5A4A5E"/><stop offset=".72" stop-color="#D98A5B"/><stop offset="1" stop-color="#F2C27A"/></linearGradient>
+      <linearGradient id="lake" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E7B476"/><stop offset="1" stop-color="#3A3442"/></linearGradient>
+    </defs>
+    <rect width="400" height="800" fill="url(#sky)"/>
+    <circle cx="300" cy="455" r="26" fill="#FBE3B0" opacity=".9"/>
+    <path d="M110 520 L200 400 Q210 392 220 400 L310 520 Z" fill="#3E3A4A"/>
+    <path d="M178 430 L200 400 Q210 392 220 400 L242 430 Q228 424 216 432 Q206 422 196 432 Q188 424 178 430 Z" fill="#EDE6E0" opacity=".85"/>
+    <path d="M0 520 Q60 470 130 505 T260 500 T400 490 L400 560 L0 560 Z" fill="#4A3440"/>
+    <rect y="556" width="400" height="244" fill="url(#lake)"/>
+    <path d="M0 556 Q50 520 90 548 Q120 510 160 552 Q200 522 240 550 Q280 515 320 548 Q360 520 400 540 L400 600 L0 600 Z" fill="#9C3A26"/>
+    <path d="M0 585 Q40 560 80 580 Q130 548 170 585 Q220 560 260 582 Q310 552 350 580 Q380 566 400 575 L400 630 L0 630 Z" fill="#C8642B"/>
+    <path d="M0 615 Q60 595 110 612 Q170 590 220 614 Q280 596 330 612 Q370 600 400 606 L400 800 L0 800 Z" fill="#6E2E24"/>
+  </svg>
+  <div class="splashGradient"></div>
+  <div class="splashContent">
+    <div class="splashTitle">2026 HOKKAIDO</div>
+    <div class="splashSub">AUTUMN FOLIAGE ROAD TRIP · 10/9 – 10/18</div>
+    <div class="splashDots"><span></span><span></span><span></span></div>
+  </div>
+</div>
+<div id="app">
+  <header class="top"></header>
+
+  <section id="view-split" hidden>
+    <div class="splitPeople" id="splitPeople"></div>
+    <div class="splitSummary" id="splitSummary"></div>
+    <div class="addrow"><button class="btn" id="btnAddExpense">＋ 新增花費</button></div>
+    <div id="expenseList"></div>
+  </section>
+
+  <section id="view-itinerary" hidden>
+    <div class="dayHero">
+      <div class="dayHeroLabelWrap">
+        <div class="dayHeroLabelCol">
+          <div class="dayHeroLabel" id="dayHeroLabel">D1</div>
+          <div class="dayHeroDate" id="dayHeroDate"></div>
+        </div>
+        <div class="dayHeroArrows">
+          <button class="dayArrowBtn" id="dayArrowUp" aria-label="上一天">▲</button>
+          <button class="dayArrowBtn" id="dayArrowDown" aria-label="下一天">▼</button>
+        </div>
+      </div>
+      <div class="dayHeroWeather" id="dayHeroWeather"></div>
+    </div>
+    <div style="text-align:right;padding:6px 16px 0"><button class="btn ghost" id="btnAddDay">＋ 新增一天</button></div>
+    <div class="summary" id="daySummary"></div>
+    <div id="itemList"></div>
+    <div class="addrow"><button class="btn" id="btnAddItem">＋ 新增項目</button></div>
+    <div style="text-align:center"><button class="btn ghost" id="btnReset">重置成範例資料</button></div>
+  </section>
+
+  <section id="view-info" hidden>
+    <div class="chips" id="infoSubTabs">
+      <div class="chip active" data-sub="weather">⛅ 天氣</div>
+      <div class="chip" data-sub="apps">📱 常用 App</div>
+      <div class="chip" data-sub="markets">🏪 超商伴手禮</div>
+      <div class="chip" data-sub="recipes">🍜 美食</div>
+      <div class="chip" data-sub="drivingtips">🚗 自駕須知</div>
+      <div class="chip" data-sub="stays">🏠 住宿資訊</div>
+      <div class="chip" data-sub="packing">🧳 行李清單</div>
+      <div class="chip" data-sub="sim">📶 電信/網路</div>
+    </div>
+
+    <div id="infoWeatherPanel">
+      <div class="formRow" style="margin-top:8px">
+        <div>
+          <label class="meta" style="display:block;margin-bottom:4px;color:var(--ink-2);font-size:12px">地點</label>
+          <select id="weatherPlaceSelect"></select>
+        </div>
+        <div>
+          <label class="meta" style="display:block;margin-bottom:4px;color:var(--ink-2);font-size:12px">日期</label>
+          <input type="date" id="weatherDateInput">
+        </div>
+      </div>
+      <div id="weatherCustomCoords" class="formRow" hidden>
+        <div><label style="font-size:12px;color:var(--ink-2)">緯度</label><input type="number" step="0.0001" id="weatherLatInput"></div>
+        <div><label style="font-size:12px;color:var(--ink-2)">經度</label><input type="number" step="0.0001" id="weatherLngInput"></div>
+      </div>
+      <div id="weatherPanel"></div>
+    </div>
+
+    <div id="infoAppsPanel" hidden></div>
+    <div id="infoMarketsPanel" hidden></div>
+    <div id="infoRecipesPanel" hidden></div>
+    <div id="infoDrivingTipsPanel" hidden></div>
+    <div id="infoStaysPanel" hidden></div>
+    <div id="infoPackingPanel" hidden></div>
+    <div id="infoSimPanel" hidden></div>
+  </section>
+
+  <nav id="tabbar">
+    <button class="tabbtn" data-view="split"><span class="ic">💰</span>分帳</button>
+    <button class="tabbtn active" data-view="itinerary"><span class="ic">🗺️</span>行程</button>
+    <button class="tabbtn" data-view="info"><span class="ic">ℹ️</span>資訊</button>
+  </nav>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCDbgtRyVvP9W1hEqfIpQsGn99WAak2uKw",
+  authDomain: "iceland2026.firebaseapp.com",
+  projectId: "iceland2026",
+  storageBucket: "iceland2026.firebasestorage.app",
+  messagingSenderId: "75709437198",
+  appId: "1:75709437198:web:18c335e832942144c6735f"
+};
+
+try{
+  const fbApp = initializeApp(firebaseConfig);
+  const db = getFirestore(fbApp);
+  const tripRef = doc(db, 'trips', 'hokkaido2026');
+  window.firebaseSync = {
+    ready: true,
+    save: (data) => setDoc(tripRef, data, {merge:false}).catch(err=>console.error('Firestore 寫入失敗', err)),
+    listen: (cb) => onSnapshot(tripRef, snap=>cb(snap.exists()?snap.data():null), err=>console.error('Firestore 監聽失敗', err))
+  };
+}catch(err){
+  console.error('Firebase 初始化失敗', err);
+  window.firebaseSync = {ready:false, save:()=>{}, listen:()=>{}};
+}
+window.dispatchEvent(new Event('firebase-ready'));
+</script>
+
+<script>
+const TYPE_META = {
+  transit:{icon:'🚗',label:'交通'}, sight:{icon:'📍',label:'景點'},
+  meal:{icon:'🍽️',label:'用餐'}, sleep:{icon:'🛏️',label:'住宿'},
+  photo:{icon:'🌅',label:'日出日落'}, errand:{icon:'🛒',label:'採買'},
+  other:{icon:'⏰',label:'其他'}
+};
+const WEATHER_CODE_MAP = {
+  0:{icon:'☀️',label:'晴天'}, 1:{icon:'🌤️',label:'晴時多雲'}, 2:{icon:'⛅',label:'多雲'}, 3:{icon:'☁️',label:'陰天'},
+  45:{icon:'🌫️',label:'起霧'}, 48:{icon:'🌫️',label:'霧淞'},
+  51:{icon:'🌦️',label:'毛毛雨（弱）'}, 53:{icon:'🌦️',label:'毛毛雨（中）'}, 55:{icon:'🌦️',label:'毛毛雨（強）'},
+  56:{icon:'🌧️',label:'凍雨（弱）'}, 57:{icon:'🌧️',label:'凍雨（強）'},
+  61:{icon:'🌧️',label:'小雨'}, 63:{icon:'🌧️',label:'中雨'}, 65:{icon:'🌧️',label:'大雨'},
+  66:{icon:'🌧️',label:'凍雨（弱）'}, 67:{icon:'🌧️',label:'凍雨（強）'},
+  71:{icon:'❄️',label:'小雪'}, 73:{icon:'❄️',label:'中雪'}, 75:{icon:'❄️',label:'大雪'}, 77:{icon:'❄️',label:'冰粒'},
+  80:{icon:'🌦️',label:'陣雨（弱）'}, 81:{icon:'🌦️',label:'陣雨（中）'}, 82:{icon:'🌧️',label:'陣雨（強）'},
+  85:{icon:'🌨️',label:'陣雪（弱）'}, 86:{icon:'🌨️',label:'陣雪（強）'},
+  95:{icon:'⛈️',label:'雷雨'}, 96:{icon:'⛈️',label:'雷雨（冰雹）'}, 99:{icon:'⛈️',label:'雷雨（強冰雹）'}
+};
+const WEATHER_NIGHT_ICON = { 0:{icon:'🌙',label:'晴朗（夜）'}, 1:{icon:'🌙',label:'晴時多雲（夜）'}, 2:{icon:'☁️',label:'多雲（夜）'} };
+function weatherIconFor(code, isDay){
+  if(code==null) return {icon:'🌡️',label:''};
+  if(isDay===0 && WEATHER_NIGHT_ICON[code]) return WEATHER_NIGHT_ICON[code];
+  return WEATHER_CODE_MAP[code]||{icon:'❓',label:'未知'};
+}
+function uvLevel(uv){
+  if(uv==null||isNaN(uv)) return {label:'',color:'var(--ink-2)'};
+  if(uv<3) return {label:'低',color:'var(--green)'};
+  if(uv<6) return {label:'中等',color:'var(--amber)'};
+  if(uv<8) return {label:'高',color:'#E07A2C'};
+  if(uv<11) return {label:'很高',color:'var(--red)'};
+  return {label:'極高',color:'#8E2FBF'};
+}
+function windDirLabel(deg){
+  if(deg==null||isNaN(deg)) return '';
+  const dirs=['北','北北東','東北','東北東','東','東南東','東南','南南東','南','南南西','西南','西南西','西','西北西','西北','北北西'];
+  return dirs[Math.round(deg/22.5)%16];
+}
+function windLevel(speed){
+  if(speed==null||isNaN(speed)) return {label:'',color:'var(--ink-2)'};
+  if(speed<8) return {label:'微風',color:'var(--green)'};
+  if(speed<14) return {label:'有風',color:'var(--amber)'};
+  if(speed<20) return {label:'強風',color:'#E07A2C'};
+  return {label:'注意行車',color:'var(--red)'};
+}
+const PLACES = [
+  {key:'cts', keys:['新千歲','新千歳','Chitose'], q:'新千歳空港', lat:42.7752, lng:141.6923, label:'新千歲機場', photoQuery:'New Chitose Airport'},
+  {key:'sapporo', keys:['札幌','Sapporo'], q:'札幌駅', lat:43.0687, lng:141.3508, label:'札幌市中心', photoQuery:'Sapporo Odori Park autumn'},
+  {key:'gracery', keys:['Gracery','グレイスリー'], q:'ホテルグレイスリー札幌', lat:43.0669, lng:141.3519, label:'Hotel Gracery Sapporo', photoQuery:'Sapporo Station'},
+  {key:'mets', keys:['Mets Premier','METS PREMIER','メッツ'], q:'JR-EAST HOTEL METS PREMIER 札幌', lat:43.0700, lng:141.3480, label:'JR-EAST Hotel Mets Premier Sapporo', photoQuery:'Sapporo Station'},
+  {key:'akarenga', keys:['赤れんが','赤煉瓦','紅磚'], q:'北海道庁旧本庁舎 赤れんが庁舎', lat:43.0637, lng:141.3479, label:'赤れんが庁舎（北海道廳舊本廳舍）', photoQuery:'Former Hokkaido Government Office Building', blurb:'1888 年落成的新巴洛克式紅磚建築，札幌最具代表性的地標，2025 年 7 月整修完成重新開放；前庭有銀杏與楓樹，秋天紅磚配黃葉很上鏡。'},
+  {key:'hokudai', keys:['北大','北海道大學','銀杏並木'], q:'北海道大学 イチョウ並木', lat:43.0774, lng:141.3432, label:'北海道大學 銀杏並木', photoQuery:'Hokkaido University ginkgo avenue', blurb:'北大北13條門的銀杏大道，約 70 棵銀杏排成 380 公尺黃金隧道，是札幌秋天最有名的畫面之一，平常高峰落在 10 月下旬到 11 月初。'},
+  {key:'moiwa', keys:['藻岩山','もいわ山','Moiwa'], q:'もいわ山ロープウェイ 山麓駅', lat:43.0435, lng:141.3235, label:'藻岩山纜車 山麓站', photoQuery:'Mount Moiwa Sapporo night view', blurb:'海拔 531 公尺的札幌市區展望台，搭纜車＋迷你纜車上山，可一路拍日落、藍調到「日本新三大夜景」的札幌夜景。'},
+  {key:'bible', keys:['bi.ble','ビブレ'], q:'bi.ble 美瑛', lat:43.6060, lng:142.4480, label:'bi.ble（美瑛）', photoQuery:'Biei hills autumn', blurb:'由美瑛舊北瑛小學校舍改建的法式餐廳＋麵包坊，使用美瑛在地食材，晚餐只有套餐。'},
+  {key:'kenmary', keys:['パッチワーク','拼布之路','ケンとメリー'], q:'ケンとメリーの木', lat:43.6036, lng:142.4570, label:'拼布之路（Ken & Mary 之樹）', photoQuery:'Biei Patchwork Road', blurb:'美瑛北側丘陵，收割後的麥田、牧草地拼成一塊塊色塊，搭配 Ken & Mary 之樹、七星之樹等名樹，是美瑛經典公路風景。'},
+  {key:'hokusei', keys:['北西の丘','北西之丘'], q:'北西の丘展望公園', lat:43.6012, lng:142.4616, label:'北西之丘展望公園', photoQuery:'Biei hills', blurb:'金字塔形展望台可 360 度眺望美瑛丘陵與遠方大雪山連峰，停車方便，適合當拼布之路的起點。'},
+  {key:'shinei', keys:['新榮之丘','新栄の丘'], q:'新栄の丘展望公園', lat:43.5503, lng:142.4467, label:'新榮之丘展望公園', photoQuery:'Biei Shinei no Oka sunset', blurb:'美瑛最有名的夕陽點，視野朝西與南，天氣好時可看到十勝岳連峰被夕陽染紅。'},
+  {key:'shikisai', keys:['四季彩','四季彩の丘'], q:'四季彩の丘', lat:43.5307, lng:142.4630, label:'四季彩之丘', photoQuery:'Shikisai no Oka Biei', blurb:'美瑛最大的花田丘陵，10 月花季多已收尾，但起伏的丘陵與遠方十勝岳仍然好拍。'},
+  {key:'aoike', keys:['青池','青い池'], q:'白金青い池', lat:43.4930, lng:142.6146, label:'白金青池', photoQuery:'Shirogane Blue Pond', blurb:'含鋁成分的湧泉讓池水呈現鈷藍色，枯立的落葉松插在水中，秋天周圍林木轉黃；無風清晨倒影最漂亮。'},
+  {key:'shirahige', keys:['白鬚','白ひげの滝'], q:'白ひげの滝', lat:43.4912, lng:142.6410, label:'白鬚瀑布（白金溫泉）', photoQuery:'Shirahige Falls Biei', blurb:'從岩縫間湧出的地下水沿崖壁流下，匯入藍色的美瑛川，從白金溫泉的「藍河橋」上俯拍最經典。'},
+  {key:'bogakudai', keys:['望岳台','十勝岳望岳台','十勝岳'], q:'望岳台', lat:43.4647, lng:142.6555, label:'望岳台（十勝岳）', photoQuery:'Tokachidake Bogakudai', blurb:'十勝岳中腹海拔約 930 公尺的展望台，正對仍在冒煙的活火山十勝岳，山腳下的紅黃灌木帶是高海拔紅葉的第一站。'},
+  {key:'asahikawa', keys:['旭川','Asahikawa'], q:'旭川駅', lat:43.7630, lng:142.3584, label:'旭川', photoQuery:'Asahikawa Hokkaido'},
+  {key:'sounkaku', keys:['層雲閣','Mountain Resort 1923'], q:'層雲閣 Mountain Resort 1923', lat:43.7271, lng:142.9468, label:'層雲閣 Mountain Resort 1923', photoQuery:'Sounkyo gorge autumn'},
+  {key:'momijidani', keys:['紅葉谷'], q:'層雲峡 紅葉谷', lat:43.7295, lng:142.9405, label:'層雲峽 紅葉谷', photoQuery:'Sounkyo Momijidani', blurb:'從層雲峽溫泉街步行可達的溪谷步道，來回約 1 小時，終點是紅葉谷瀑布，海拔較低、紅葉比黑岳晚。'},
+  {key:'ryusei', keys:['流星','銀河の滝','銀河瀑布'], q:'流星の滝 銀河の滝 駐車場', lat:43.7128, lng:142.9800, label:'流星・銀河瀑布', photoQuery:'Ryusei Ginga Falls Sounkyo', blurb:'層雲峽最有名的一對瀑布，陽剛的「流星」與細長的「銀河」並排於柱狀節理絕壁上，又稱夫婦瀑布；爬上雙瀑台可同時拍到兩條。'},
+  {key:'obako', keys:['大函'], q:'大函 層雲峡', lat:43.6980, lng:143.0220, label:'大函', photoQuery:'Obako Sounkyo', blurb:'石狩川兩岸高達 200 公尺的柱狀節理岩壁，是層雲峽峽谷景觀最集中的一段，路邊就有停車場。'},
+  {key:'sounkyo', keys:['層雲峽','層雲峡','Sounkyo'], q:'層雲峡温泉', lat:43.7260, lng:142.9490, label:'層雲峽溫泉', photoQuery:'Sounkyo gorge autumn', blurb:'大雪山國立公園北側的峽谷溫泉鄉，也是全日本最早迎來紅葉的地方之一。'},
+  {key:'mikuni', keys:['三國峠','三国峠','松見大橋'], q:'三国峠 松見大橋', lat:43.5690, lng:143.1450, label:'三國峠（松見大橋）', photoQuery:'Mikuni Pass Hokkaido autumn', blurb:'海拔 1,139 公尺，北海道國道最高點；從展望台俯看紅色鐵橋松見大橋橫越一整片原始林海，是道內代表性的紅葉公路。'},
+  {key:'bihoro', keys:['美幌峠'], q:'道の駅 ぐるっとパノラマ美幌峠', lat:43.6411, lng:144.2572, label:'美幌峠', photoQuery:'Bihoro Pass Lake Kussharo', blurb:'俯瞰日本最大火口湖屈斜路湖與湖中島的展望點，天氣好可以看到斜里岳、知床連山，道之驛以炸馬鈴薯「揚げいも」聞名。'},
+  {key:'sunayu', keys:['砂湯'], q:'砂湯 屈斜路湖', lat:43.6177, lng:144.3408, label:'砂湯（屈斜路湖）', photoQuery:'Sunayu Lake Kussharo', blurb:'屈斜路湖畔挖開沙子就會湧出溫泉的湖岸，可以直接泡腳；秋天是天鵝開始飛來的季節。'},
+  {key:'iozan', keys:['硫黃山','硫黄山','Iozan'], q:'硫黄山 弟子屈', lat:43.6120, lng:144.4378, label:'硫黃山（アトサヌプリ）', photoQuery:'Iozan Kawayu', blurb:'仍在噴氣的活火山，黃色硫磺結晶遍布噴氣孔，停車場走幾步就能靠近；硫磺味很重。'},
+  {key:'kussharo', keys:['屈斜路','Kussharo Prince','屈斜路王子'], q:'屈斜路プリンスホテル', lat:43.5670, lng:144.3300, label:'屈斜路王子大飯店', photoQuery:'Lake Kussharo'},
+  {key:'mashu', keys:['摩周湖','Mashu'], q:'摩周湖第一展望台', lat:43.5530, lng:144.5117, label:'摩周湖 第一展望台', photoQuery:'Lake Mashu', blurb:'透明度曾是世界第一的破火山口湖，湖面常被霧氣籠罩，有「霧之摩周湖」之稱；秋天清晨有機會看到雲海流入火口。'},
+  {key:'sogaku', keys:['雙岳台','双岳台','雙湖台','双湖台'], q:'双湖台', lat:43.4490, lng:144.1990, label:'雙湖台・雙岳台', photoQuery:'Akan Soukodai', blurb:'國道 241 號上相鄰的兩個展望點：雙湖台俯瞰原始林中的 Penketo、Panketo 兩湖，雙岳台則同時看到雄阿寒岳與雌阿寒岳。'},
+  {key:'bokke', keys:['ボッケ','Bokke'], q:'阿寒湖 ボッケ遊歩道', lat:43.4380, lng:144.0880, label:'阿寒湖 Bokke 散策路', photoQuery:'Lake Akan Bokke', blurb:'從溫泉街沿湖畔走進森林，終點是咕嘟咕嘟冒泡的泥火山「Bokke」，沿途湖景與紅葉都很好拍，來回約 40–60 分鐘。'},
+  {key:'aikotan', keys:['アイヌコタン','愛努'], q:'阿寒湖アイヌコタン', lat:43.4330, lng:144.0870, label:'阿寒湖 愛努村（Ainu Kotan）', photoQuery:'Akan Ainu Kotan', blurb:'北海道最大的愛努族聚落，街上是木雕與工藝品店，劇場 Ikor 有愛努古式舞蹈與結合數位投影的演出。'},
+  {key:'akanyuran', keys:['阿寒湖遊覽船','遊覽船'], q:'阿寒観光汽船', lat:43.4335, lng:144.0935, label:'阿寒湖遊覽船', photoQuery:'Lake Akan cruise', blurb:'繞行阿寒湖約 85 分鐘，途中停靠 Churui 島的綠球藻（Marimo）展示觀察中心，可從湖面看雄阿寒岳與湖岸紅葉。'},
+  {key:'tsuruga', keys:['鶴雅','Tsuruga'], q:'あかん遊久の里 鶴雅', lat:43.4337, lng:144.0958, label:'阿寒湖 鶴雅', photoQuery:'Lake Akan autumn'},
+  {key:'akan', keys:['阿寒湖','Akan'], q:'阿寒湖温泉', lat:43.4330, lng:144.0900, label:'阿寒湖溫泉', photoQuery:'Lake Akan autumn', blurb:'以特別天然紀念物綠球藻聞名的火口湖，湖畔溫泉街連著愛努村，10 月中湖岸森林正轉紅。'},
+  {key:'onneto', keys:['オンネトー','Onneto'], q:'オンネトー', lat:43.3860, lng:143.9660, label:'Onneto 湖（オンネトー）', photoQuery:'Lake Onneto', blurb:'被稱為「五色沼」的神祕湖泊，湖色會隨天候與角度變化，湖面倒映雌阿寒岳與阿寒富士；10 月上中旬湖畔紅葉最美。'},
+  {key:'ashoro', keys:['足寄','Ashoro'], q:'道の駅 あしょろ銀河ホール21', lat:43.2450, lng:143.5530, label:'足寄（道之驛 銀河ホール21）', photoQuery:'Ashoro Hokkaido'},
+  {key:'tomamu', keys:['トマム','Tomamu','星野'], q:'星野リゾート トマム', lat:43.0660, lng:142.6380, label:'星野リゾート TOMAMU', photoQuery:'Hoshino Resorts Tomamu', blurb:'位於占冠村山區的大型度假村，夏秋招牌是雲海平台；秋天園區周圍山林一片金黃。'},
+  {key:'houheikyo', keys:['豐平峽','豊平峡'], q:'豊平峡ダム 駐車場', lat:42.9537, lng:141.1383, label:'豐平峽水壩（停車場）', photoQuery:'Hoheikyo Dam autumn', blurb:'定山溪深處的拱形水壩，峽谷兩側的紅葉是札幌近郊最有名的賞楓地之一；一般車只能停在停車場，再搭電動巴士或步行 2 公里進去。'},
+  {key:'futami', keys:['二見吊橋','二見'], q:'二見吊橋', lat:42.9676, lng:141.1571, label:'二見吊橋', photoQuery:'Jozankei Futami suspension bridge', blurb:'定山溪溫泉街盡頭的紅色吊橋，橋下是豐平川溪谷，從溫泉街步行約 10 分鐘，是定山溪紅葉的經典構圖。'},
+  {key:'nonoterrace', keys:['埜のてらす','フリルフスリフ','Friluftsliv','カヌー'], q:'埜のてらす 定山渓', lat:42.9680, lng:141.1640, label:'埜のてらす（Friluftsliv 集合點）', photoQuery:'Jozankei autumn Toyohira river', blurb:'定山溪溫泉街上的複合設施，戶外活動公司 Friluftsliv 的報到櫃台就在這裡；獨木舟在豐平川溪谷裡順流划行，從水面仰望紅葉。'},
+  {key:'yuraku', keys:['ゆらく草庵','有樂草庵','Yuraku'], q:'定山渓温泉 ゆらく草庵', lat:42.9672, lng:141.1612, label:'定山溪 ゆらく草庵', photoQuery:'Jozankei onsen autumn'},
+  {key:'jozankei', keys:['定山溪','定山渓','Jozankei'], q:'定山渓温泉', lat:42.9680, lng:141.1640, label:'定山溪溫泉', photoQuery:'Jozankei autumn', blurb:'札幌的「後花園」溫泉鄉，位於支笏洞爺國立公園內，豐平川溪谷兩岸 10 月中旬進入紅葉高峰。'},
+  {key:'nakayama', keys:['中山峠','中山峠'], q:'道の駅 望羊中山', lat:42.8573, lng:141.1068, label:'中山峠（道之驛 望羊中山）', photoQuery:'Nakayama Pass Mount Yotei', blurb:'國道 230 號上海拔 835 公尺的山口，正面遙望羊蹄山，清晨陽光從背後打在「蝦夷富士」上。'},
+  {key:'kimobetsu', keys:['喜茂別'], q:'喜茂別町 羊蹄山', lat:42.7950, lng:140.9340, label:'喜茂別（羊蹄山田園景觀）', photoQuery:'Mount Yotei Kimobetsu', blurb:'羊蹄山東南麓的農業小鎮，收割後的田地與防風林前景配上完整的羊蹄山山形，是清晨拍羊蹄山的好角度。'},
+  {key:'yotei', keys:['羊蹄山','Yotei'], q:'羊蹄山', lat:42.8267, lng:140.8114, label:'羊蹄山', photoQuery:'Mount Yotei autumn'},
+  {key:'daimaru', keys:['大丸'], q:'大丸札幌店', lat:43.0676, lng:141.3494, label:'大丸札幌店', photoQuery:'Sapporo Station'},
+  {key:'tokyu', keys:['東急百貨','UNIQLO'], q:'ユニクロ さっぽろ東急百貨店', lat:43.0683, lng:141.3532, label:'UNIQLO 札幌東急百貨店', photoQuery:'Sapporo Station'},
+  {key:'okushiba', keys:['奥芝商店'], q:'奥芝商店 駅前創成寺', lat:43.0650, lng:141.3560, label:'奥芝商店 站前創成寺', photoQuery:'Sapporo soup curry'},
+  {key:'takushinkan', keys:['拓真館'], q:'拓真館 美瑛', lat:43.5610, lng:142.5020, label:'拓真館', photoQuery:'Takushinkan Biei', blurb:'風景攝影家前田真三的藝廊，由廢校校舍改建，美瑛丘陵之所以聞名全日本，就是從他的作品開始；免費參觀，周圍白樺林步道也很好拍。'},
+  {key:'xmastree', keys:['聖誕樹'], q:'クリスマスツリーの木 美瑛', lat:43.5490, lng:142.5070, label:'美瑛聖誕樹（クリスマスツリーの木）', photoQuery:'Biei Christmas tree', blurb:'孤立在丘陵中央的一棵雲杉，樹形像聖誕樹，是美瑛最有名的單棵樹；四周是私人農地，只能在路邊拍。'},
+  {key:'fermelaterre', keys:['Ferme La Terre','ラ・テール'], q:'フェルム ラ・テール美瑛', lat:43.5780, lng:142.4830, label:'Ferme La Terre Biei', photoQuery:'Biei hills', blurb:'美瑛小麥與牛奶做的甜點、麵包、餐廳複合店，招牌是「大地布丁」。'},
+  {key:'potatoco', keys:['Potato&Co','ポテトアンドコー'], q:'ポテトアンドコー 美瑛', lat:43.5800, lng:142.4800, label:'Potato&Co（美瑛）', photoQuery:'Biei hills'},
+  {key:'kanman', keys:['緩慢北海道','緩慢'], q:'緩慢 北海道 美瑛', lat:43.5880, lng:142.4670, label:'緩慢北海道（住宿）', photoQuery:'Biei hills'},
+  {key:'higashichitose', keys:['Higashichitose'], q:'Higashichitose barbecue', lat:42.8200, lng:141.7300, label:'Higashichitose barbecue（東千歲）', photoQuery:'Chitose Hokkaido'},
+  {key:'hirafu', keys:['Hirafu'], q:'ローソン ニセコひらふ', lat:42.8620, lng:140.6990, label:'Lawson（二世谷 Hirafu）', photoQuery:'Niseko Hirafu'},
+  {key:'natsutouro', keys:['夏燈路','夏灯路','定山源泉公園'], q:'定山源泉公園', lat:42.9670, lng:141.1660, label:'夏燈路（定山源泉公園）', photoQuery:'Jozankei onsen night', blurb:'定山溪溫泉開湯 160 週年起辦的燈籠活動，定山溪神社、岩戶觀音堂、定山源泉公園點上燈籠，神社還有投影秀，整條溫泉街晚上都能散步。'},
+  {key:'kaniza', keys:['蟹座'], q:'かに食べ放題 蟹座札幌', lat:43.0567, lng:141.3560, label:'蟹座札幌（薄野）', photoQuery:'Susukino Sapporo night', blurb:'2025 年開幕的螃蟹吃到飽涮涮鍋，有松葉蟹、稀有的金色帝王蟹，也有和牛。'},
+  {key:'hosui', keys:['豐水薄野','豊水すすきの'], q:'豊水すすきの駅', lat:43.0560, lng:141.3570, label:'豐水薄野站', photoQuery:'Susukino Sapporo night'},
+  {key:'daikokuya', keys:['大黑屋','大黒屋'], q:'旭川成吉思汗 大黒屋 旭川五丁目店', lat:43.7680, lng:142.3610, label:'旭川成吉思汗 大黑屋（本店）', photoQuery:'Asahikawa Hokkaido'},
+  {key:'shujitsu', keys:['就實之丘','就実の丘'], q:'就実の丘 美瑛', lat:43.5560, lng:142.5330, label:'就實之丘', photoQuery:'Biei hills sunset', blurb:'美瑛東側的高台，一條起伏的直線農道一路延伸到十勝岳連峰，視野開闊、遊客比新榮之丘少，看夕陽與丘陵線條都很好。'},
+  {key:'toriton', keys:['Toriton','トリトン'], q:'回転寿しトリトン 旭神店', lat:43.7400, lng:142.3950, label:'迴轉壽司 Toriton 旭神店', photoQuery:'Asahikawa Hokkaido', blurb:'北海道人氣迴轉壽司連鎖，以道產海鮮與份量大聞名，旭神店是發源地一帶的熱門店。'},
+  {key:'custom', keys:[], lat:null, lng:null, label:'自訂座標…'}
+];
+
+const SEED = {days:[
+{
+  id:'d1', label:'D1', date:'2026-10-09', sub:'桃園 → 新千歲 → 札幌',
+  items:[
+    {id:'d1i1', time:'07:05', type:'other', title:'桃園機場', icon:'📍', note:'入境：出發前先在 Visit Japan Web 填好入境與海關資料，拿到 QR code'},
+    {id:'d1i2', time:'10:05', type:'transit', title:'桃園機場TPE → 新千歲機場CTS', from:'桃園機場TPE', to:'新千歲機場CTS', durationMin:240, arrivalTime:'15:10', icon:'✈️', note:'15:10 抵達（日本時間，比台灣快 1 小時）｜⏳ 航班號碼待填'},
+    {id:'d1i3', time:'16:00', type:'other', title:'入境', icon:'🇯🇵'},
+    {id:'d1i4', time:'16:15', type:'transit', title:'新千歲機場 → 札幌車站', from:'新千歲機場', to:'札幌車站', durationMin:37, arrivalTime:'17:00', icon:'🚆', note:'JR 快速 Airport，約 37 分鐘｜今天不開車，取車在明天 11:50'},
+    {id:'d1i5', time:'17:05', type:'photo', title:'Sunset'},
+    {id:'d1i6', time:'17:10', type:'sleep', title:'JR-EAST HOTEL METS PREMIER SAPPORO', note:'今晚還沒有車，飯店沒有停車場不影響'},
+    {id:'d1i7', time:'17:30', type:'transit', title:'METS PREMIER → 大丸百貨', from:'METS PREMIER', to:'大丸百貨', durationMin:10, icon:'🚶'},
+    {id:'d1i8', time:'17:40', type:'sight', title:'大丸百貨-LV包包', durationMin:60, note:'大丸札幌店一般營業到 20:00'},
+    {id:'d1i9', time:'18:50', type:'transit', title:'大丸百貨 → UNIQLO 札幌東急百貨店', from:'大丸百貨', to:'UNIQLO 札幌東急百貨店', durationMin:10, icon:'🚶'},
+    {id:'d1i10', time:'19:00', type:'sight', title:'UNIQLO 札幌東急百貨店', durationMin:60, note:'東急百貨店大多 20:00 打烊，19:55 離開剛好'},
+    {id:'d1i11', time:'19:55', type:'transit', title:'札幌（札幌市營）→ 豐水薄野', from:'札幌', to:'豐水薄野', durationMin:15, arrivalTime:'20:10', icon:'🚇', note:'地下鐵東豐線 さっぽろ → 豊水すすきの，搭 2 站；含走路約 15 分鐘'},
+    {id:'d1i12', time:'20:15', type:'meal', title:'蟹座札幌', durationMin:90, note:'かに食べ放題 蟹座札幌｜南4條西2 南4西2ビル 9F，豊水すすきの站步行約 2 分鐘｜17:00–22:30，最後點餐 21:00｜吃到飽 90 分鐘（座位 100 分鐘）→ 20:15 入座正好，別晚到｜預約：autoreserve.com'}
+  ]
+},
+{
+  id:'d2', label:'D2', date:'2026-10-10', sub:'札幌 → 美瑛 → 旭川 → 美瑛',
+  items:[
+    {id:'d2i0', time:'05:40', type:'photo', title:'Sunrise'},
+    {id:'d2i1', time:'08:30', type:'sight', title:'北海道廳舊本廳舍 赤れんが庁舎', durationMin:90, note:'⚠️ 館內 8:45 才開門，前 15 分鐘先拍外觀和前庭（前庭隨時可進）｜8:45–21:00｜門票 ¥300'},
+    {id:'d2i2', time:'10:40', type:'meal', title:'湯咖哩 奥芝商店 站前創成寺', durationMin:45, note:'⚠️ 11:00 才開門，10:40 到剛好先排隊（週六中午會排）｜北4條西1 ホクレンビル B1F（パールタウン），札幌站南口走 2–3 分鐘｜午餐 11:00–15:00 L.O.｜不定休'},
+    {id:'d2i3', time:'11:50', type:'errand', title:'租車', durationMin:30, note:'札幌市中心取車｜取車時一起辦：① 租 ETC 卡 ② 決定要不要申請 HEP（見 資訊→自駕須知）③ 拍下車身原有刮痕｜⏳ 租車公司、訂單號待填'},
+    {id:'d2i4', time:'12:30', type:'transit', title:'札幌 → 拓真館', from:'札幌', to:'拓真館', durationMin:150},
+    {id:'d2i5', time:'15:00', type:'sight', title:'拓真館', durationMin:60, note:'前田真三風景攝影藝廊｜4–10 月 10:00–17:00｜週三公休（10/10 週六 OK）｜免費'},
+    {id:'d2i6', time:'16:10', type:'transit', title:'拓真館 → 北西之丘展望公園', from:'拓真館', to:'北西之丘展望公園', durationMin:20},
+    {id:'d2i7', time:'16:35', type:'sight', title:'北西之丘 展望公園', durationMin:30, note:'📷 日落 16:54，16:35 到只剩約 20 分鐘；美瑛丘陵的斜射光在日落前 30–40 分鐘最好 → 可考慮拓真館縮成 45 分鐘，16:15 前到'},
+    {id:'d2i8', time:'16:54', type:'photo', title:'Sunset'},
+    {id:'d2i9', time:'17:10', type:'transit', title:'北西之丘展望公園 → 旭川成吉思汗 大黑屋', from:'北西之丘展望公園', to:'旭川成吉思汗 大黑屋', durationMin:35, arrivalTime:'17:45', note:'🅿️ 大黑屋沒有停車場，導航直接設附近投幣式停車場（4條通5丁目一帶）｜天黑後的丘陵道路注意鹿'},
+    {id:'d2i10', time:'18:00', type:'meal', title:'旭川成吉思汗 大黑屋', durationMin:120, note:'旭川本店（4條通5丁目，3・4仲通）｜15:00–23:00，L.O. 21:50｜可訂位：電話 0166-24-2424 或官網線上預約 → 週六晚上很多人排，建議先訂 18:00｜生羊肉不冷凍，招牌是羊肩肉'},
+    {id:'d2i11', time:'20:00', type:'transit', title:'旭川成吉思汗 大黑屋 → 緩慢北海道', from:'旭川成吉思汗 大黑屋', to:'緩慢北海道', durationMin:45},
+    {id:'d2i12', time:'20:50', type:'sleep', title:'緩慢北海道', note:'⏳ 對照入住截止時間，20:50 才到要先跟住宿說'},
+    {id:'d2i13', time:'21:30', type:'transit', title:'緩慢北海道 → 美瑛聖誕樹', from:'緩慢北海道', to:'美瑛聖誕樹', durationMin:10},
+    {id:'d2i14', time:'21:45', type:'sight', title:'美瑛聖誕樹銀河', durationMin:35, note:'🌑 10/10 月齡約 28、10/11 是新月 —— 整趟最暗的夜空，拍星空的最好時機｜10 月這個時間銀河在西南方偏低，先用 App 確認方位｜聖誕樹在私人農地，只能在路邊拍，不要進田｜夜間氣溫可能接近 0°C；🐻 帶熊鈴、頭燈'},
+    {id:'d2i15', time:'22:20', type:'transit', title:'美瑛聖誕樹 → 緩慢北海道', from:'美瑛聖誕樹', to:'緩慢北海道', durationMin:10, note:'原本 Notion 寫 10:20→10:30，應該是 22:20→22:30，已改'}
+  ]
+},
+{
+  id:'d3', label:'D3', date:'2026-10-11', sub:'美瑛丘陵・白金 → 旭川',
+  items:[
+    {id:'d3i0', time:'05:41', type:'photo', title:'Sunrise'},
+    {id:'d3i1', time:'08:30', type:'transit', title:'緩慢北海道 → 美瑛聖誕樹', from:'緩慢北海道', to:'美瑛聖誕樹', durationMin:10},
+    {id:'d3i2', time:'08:45', type:'sight', title:'美瑛聖誕樹', durationMin:15, note:'昨晚拍星空，今天白天再拍一次｜私人農地，只能在路邊拍'},
+    {id:'d3i3', time:'09:05', type:'transit', title:'美瑛聖誕樹 → 四季彩之丘', from:'美瑛聖誕樹', to:'四季彩之丘', durationMin:10},
+    {id:'d3i4', time:'09:20', type:'sight', title:'四季彩之丘', durationMin:90, note:'10 月花田多已收尾，重點改拍丘陵線條與遠方十勝岳'},
+    {id:'d3i5', time:'10:55', type:'transit', title:'四季彩之丘 → Ferme La Terre Biei', from:'四季彩之丘', to:'Ferme La Terre Biei', durationMin:20},
+    {id:'d3i6', time:'11:20', type:'meal', title:'Ferme La Terre Biei', durationMin:90, note:'⚠️ 餐廳是「預約優先」，線上預約到用餐日 3 天前截止（10/8 前）｜電話 0120-544-417'},
+    {id:'d3i7', time:'13:00', type:'transit', title:'Ferme La Terre Biei → 白金青池', from:'Ferme La Terre Biei', to:'白金青池', durationMin:40},
+    {id:'d3i8', time:'13:45', type:'sight', title:'白金青池', durationMin:45, note:'📷 午後是遊覽車最多、最容易起風的時段，倒影會比清晨差；有雲時池水藍色反而比較飽和｜停車場收費｜白鬚瀑布往上開約 5 分鐘，想順路可以加'},
+    {id:'d3i9', time:'14:35', type:'transit', title:'白金青池 → 新榮之丘展望公園', from:'白金青池', to:'新榮之丘展望公園', durationMin:25},
+    {id:'d3i10', time:'15:05', type:'sight', title:'新榮之丘展望公園', durationMin:20, note:'這裡是美瑛有名的夕陽點，但今天的日落排在就實之丘，這邊白天順拍即可'},
+    {id:'d3i11', time:'15:30', type:'transit', title:'新榮之丘展望公園 → Potato&Co', from:'新榮之丘展望公園', to:'Potato&Co', durationMin:10},
+    {id:'d3i12', time:'15:45', type:'meal', title:'ポテトアンドコー Potato&Co', durationMin:30, note:'薯條專賣店｜美瑛町本町1丁目（美瑛站附近）｜11:00–17:30｜週二公休（10/11 週日 OK）｜沒有專用停車場，對面有免費公共停車場'},
+    {id:'d3i13', time:'16:20', type:'transit', title:'Potato&Co → 就實之丘', from:'Potato&Co', to:'就實之丘', durationMin:15},
+    {id:'d3i14', time:'16:40', type:'sight', title:'就實之丘', durationMin:25, note:'📷 日落 16:54，16:40 到只剩約 15 分鐘，架腳架要快；丘陵的斜射光在日落前 30–40 分鐘最好 → Potato&Co 若提早離開，可以 16:20 就到'},
+    {id:'d3i15', time:'16:54', type:'photo', title:'Sunset'},
+    {id:'d3i16', time:'17:10', type:'transit', title:'就實之丘 → 迴轉壽司 Toriton 旭神店', from:'就實之丘', to:'迴轉壽司 Toriton 旭神店', durationMin:25, note:'天黑後丘陵道路注意鹿'},
+    {id:'d3i17', time:'18:00', type:'meal', title:'迴轉壽司 Toriton 旭神店', durationMin:90, note:'⚠️ 不接受訂位，只能現場排隊 —— 週日晚餐時段常等 1 小時以上；可用官方 LINE 查各店即時等候狀況，出發前先看｜11:00–22:00（L.O. 21:30）｜旭川市旭神3條5-1｜有停車場｜0166-60-7711'},
+    {id:'d3i18', time:'19:30', type:'transit', title:'迴轉壽司 Toriton 旭神店 → 緩慢北海道', from:'迴轉壽司 Toriton 旭神店', to:'緩慢北海道', durationMin:30},
+    {id:'d3i19', time:'20:05', type:'sleep', title:'緩慢北海道'}
+  ]
+},
+{
+  id:'d4', label:'D4', date:'2026-10-12', sub:'美瑛 → 旭川 → 層雲峽',
+  items:[
+    {id:'d4i0', time:'05:37', type:'photo', title:'Sunrise'},
+    {id:'d4i1', time:'09:45', type:'transit', title:'美瑛 → 旭川', from:'美瑛', to:'旭川', durationMin:40},
+    {id:'d4i2', time:'10:45', type:'meal', title:'旭川午餐', durationMin:60, note:'已挑好的三種方向：旭川醬油拉麵、成吉思汗烤羊肉、海鮮會席｜拉麵店多半 10:30–11:00 開門，早點去不用排'},
+    {id:'d4i3', time:'12:00', type:'transit', title:'旭川 → 流星・銀河瀑布', from:'旭川', to:'流星・銀河瀑布', durationMin:80, note:'🛣️ 旭川紋別自動車道（免費）愛別IC → 上川層雲峡IC → 國道 39 號，約 80 km'},
+    {id:'d4i4', time:'13:20', type:'sight', title:'流星・銀河瀑布', durationMin:45},
+    {id:'d4i5', time:'14:10', type:'transit', title:'流星・銀河瀑布 → 大函', from:'流星・銀河瀑布', to:'大函', durationMin:10},
+    {id:'d4i6', time:'14:20', type:'sight', title:'大函', durationMin:25},
+    {id:'d4i7', time:'14:45', type:'transit', title:'大函 → 層雲閣', from:'大函', to:'層雲閣', durationMin:15},
+    {id:'d4i8', time:'15:00', type:'sleep', title:'層雲閣 Mountain Resort 1923', note:'Check-in 15:00／Check-out 10:00（⏳ 對照訂房確認信）'},
+    {id:'d4i9', time:'15:20', type:'sight', title:'層雲峽 紅葉谷', durationMin:60, note:'📷 峽谷很深，實際能拍的光比官方日落早 20–30 分鐘結束 → 大約 16:25 谷裡就暗了，15:30 前一定要到位'},
+    {id:'d4i10', time:'16:52', type:'photo', title:'Sunset', note:'官方日落時間；峽谷內有效光線約 16:25 結束'}
+  ]
+},
+{
+  id:'d5', label:'D5', date:'2026-10-13', sub:'層雲峽 → 三國峠 → 屈斜路湖',
+  items:[
+    {id:'d5i0', time:'05:38', type:'photo', title:'Sunrise'},
+    {id:'d5i1', time:'05:50', type:'transit', title:'層雲閣 → 三國峠', from:'層雲閣', to:'三國峠', durationMin:40, note:'🦌 清晨國道 273 號鹿非常多，慢慢開｜❄️ 10 月中旬海拔 1,100 公尺的山口清晨可能結霜或飄初雪，租車大多還是夏季輪胎 → 出發前查「北の道ナビ 峠情報」，路面結冰就放棄'},
+    {id:'d5i2', time:'06:30', type:'sight', title:'三國峠（松見大橋）', durationMin:35, note:'定位：路邊短暫拍攝點，不是專程一天｜高海拔紅葉 9 月底–10 月初最盛，10/13 可能已進入落葉期'},
+    {id:'d5i3', time:'07:05', type:'transit', title:'三國峠 → 層雲閣', from:'三國峠', to:'層雲閣', durationMin:40},
+    {id:'d5i4', time:'07:50', type:'meal', title:'飯店早餐', durationMin:60},
+    {id:'d5i5', time:'09:50', type:'transit', title:'層雲峽 → 美幌峠', from:'層雲峽', to:'美幌峠', durationMin:160, note:'🛣️ 國道 39 號越過石北峠 → 留辺蘂 → 北見 → 美幌 → 國道 243 號上美幌峠，約 150 km｜⛽ 石北峠這段山路長、加油站少，出發前確認油量'},
+    {id:'d5i6', time:'12:30', type:'meal', title:'美幌峠 道之驛午餐', durationMin:40, note:'名物「揚げいも」炸馬鈴薯'},
+    {id:'d5i7', time:'13:10', type:'sight', title:'美幌峠展望台', durationMin:30},
+    {id:'d5i8', time:'13:45', type:'transit', title:'美幌峠 → 砂湯', from:'美幌峠', to:'砂湯', durationMin:30},
+    {id:'d5i9', time:'14:15', type:'sight', title:'砂湯', durationMin:30},
+    {id:'d5i10', time:'14:50', type:'transit', title:'砂湯 → 硫黃山', from:'砂湯', to:'硫黃山', durationMin:20},
+    {id:'d5i11', time:'15:10', type:'sight', title:'硫黃山', durationMin:30},
+    {id:'d5i12', time:'15:45', type:'transit', title:'硫黃山 → 屈斜路王子大飯店', from:'硫黃山', to:'屈斜路王子大飯店', durationMin:25},
+    {id:'d5i13', time:'16:10', type:'sleep', title:'屈斜路王子大飯店', note:'⏳ Check-in／Check-out 時間對照訂房確認'},
+    {id:'d5i14', time:'16:45', type:'photo', title:'Sunset'}
+  ]
+},
+{
+  id:'d6', label:'D6', date:'2026-10-14', sub:'屈斜路湖 → 摩周湖 → 阿寒湖',
+  items:[
+    {id:'d6i0', time:'04:50', type:'transit', title:'屈斜路王子大飯店 → 摩周湖', from:'屈斜路王子大飯店', to:'摩周湖', durationMin:35, note:'🦌 天黑的山路，鹿會突然衝出來'},
+    {id:'d6i1', time:'05:25', type:'sight', title:'摩周湖 第一展望台（日出）', durationMin:60, note:'📷 秋天清晨有機會看到雲海流進火口，也可能整個湖被霧蓋住（霧之摩周湖）｜第一展望台停車場收費；第三展望台免費、人更少，可以兩個都停'},
+    {id:'d6i2', time:'05:34', type:'photo', title:'Sunrise'},
+    {id:'d6i3', time:'06:30', type:'transit', title:'摩周湖 → 屈斜路王子大飯店', from:'摩周湖', to:'屈斜路王子大飯店', durationMin:35},
+    {id:'d6i4', time:'07:15', type:'meal', title:'飯店早餐', durationMin:60},
+    {id:'d6i5', time:'10:00', type:'transit', title:'屈斜路王子大飯店 → 雙湖台', from:'屈斜路王子大飯店', to:'雙湖台', durationMin:50, note:'🛣️ 經弟子屈接國道 241 號（阿寒橫斷道路）往西'},
+    {id:'d6i6', time:'10:50', type:'sight', title:'雙岳台・雙湖台', durationMin:30},
+    {id:'d6i7', time:'11:20', type:'transit', title:'雙湖台 → 阿寒湖', from:'雙湖台', to:'阿寒湖', durationMin:20},
+    {id:'d6i8', time:'11:45', type:'meal', title:'阿寒湖溫泉街午餐', durationMin:60},
+    {id:'d6i9', time:'13:00', type:'sight', title:'阿寒湖 Bokke 散策路', durationMin:60},
+    {id:'d6i10', time:'14:15', type:'sight', title:'阿寒湖遊覽船（選擇性）', durationMin:85, note:'約 85 分鐘，中途停靠綠球藻展示觀察中心｜末班時間出發前查'},
+    {id:'d6i11', time:'15:45', type:'sleep', title:'阿寒湖 鶴雅', note:'⏳ 鶴雅在阿寒湖有好幾館（遊久の里 鶴雅、鶴雅ウイングス、鄙の座…），確認訂的是哪一館｜Check-in 時間對照訂房'},
+    {id:'d6i12', time:'16:44', type:'photo', title:'Sunset', note:'湖畔朝西，日落時雄阿寒岳側光'},
+    {id:'d6i13', time:'20:00', type:'sight', title:'阿寒湖 愛努村', durationMin:60, note:'劇場 Ikor 有愛努古式舞蹈與數位投影演出，場次與票價出發前查'}
+  ]
+},
+{
+  id:'d7', label:'D7', date:'2026-10-15', sub:'阿寒湖 → Onneto → TOMAMU',
+  items:[
+    {id:'d7i0', time:'05:36', type:'photo', title:'Sunrise'},
+    {id:'d7i1', time:'09:30', type:'transit', title:'阿寒湖 → Onneto 湖', from:'阿寒湖', to:'Onneto 湖', durationMin:30, note:'順路：往足寄方向的國道 241 號，岔進道道 664 號'},
+    {id:'d7i2', time:'10:00', type:'sight', title:'Onneto 湖', durationMin:60, note:'📷 無風時湖面倒映雌阿寒岳與阿寒富士｜10 月上中旬正好是湖畔紅葉期｜周邊有熊出沒紀錄，帶熊鈴'},
+    {id:'d7i3', time:'11:05', type:'transit', title:'Onneto 湖 → 足寄', from:'Onneto 湖', to:'足寄', durationMin:40},
+    {id:'d7i4', time:'11:45', type:'meal', title:'足寄午餐', durationMin:60, note:'十勝一帶名物：豚丼'},
+    {id:'d7i5', time:'12:50', type:'transit', title:'足寄 → 星野TOMAMU', from:'足寄', to:'星野TOMAMU', durationMin:110, note:'🛣️ 足寄IC → 道東道 → トマムIC，約 130 km'},
+    {id:'d7i6', time:'14:45', type:'sleep', title:'星野リゾート TOMAMU', note:'🔴 雲海平台 2026 年營業期間是 5/13–10/13（預定），住宿的 10/15–16 已經結束營業，不要排雲海｜⏳ 確認住的是 The Tower 還是 RISONARE，Check-in 時間對照訂房'},
+    {id:'d7i7', time:'15:30', type:'sight', title:'TOMAMU 園區散步', noTime:true, note:'秋天的金黃山林；各設施營業期間現場確認'},
+    {id:'d7i8', time:'16:49', type:'photo', title:'Sunset'}
+  ]
+},
+{
+  id:'d8', label:'D8', date:'2026-10-16', sub:'TOMAMU → 東千歲 → 定山溪',
+  items:[
+    {id:'d8i1', time:'09:30', type:'transit', title:'星野Tomamu → Higashichitose barbecue', from:'星野Tomamu', to:'Higashichitose barbecue', durationMin:90},
+    {id:'d8i2', time:'11:05', type:'meal', title:'Higashichitose barbecue', durationMin:45},
+    {id:'d8i3', time:'11:50', type:'transit', title:'Higashichitose barbecue → 定山溪有樂草庵', from:'Higashichitose barbecue', to:'定山溪有樂草庵', durationMin:90},
+    {id:'d8i4', time:'13:30', type:'sight', title:'二見吊橋散步', durationMin:60, note:'13:20 到旅館先寄放行李、停車，再走過去（約 10 分鐘）'},
+    {id:'d8i5', time:'14:35', type:'other', title:'Hirafu Lawson', icon:'📍', noTime:true, note:'⚠️ ヒラフ（Hirafu）在二世谷，離定山溪單程約 1.5 小時，排在這裡不合理 —— 是不是要放在 D9 拍羊蹄山那天？或是指定山溪的 Lawson？'},
+    {id:'d8i6', time:'14:45', type:'sight', title:'Friluftsliv 獨木舟/SUP', durationMin:135, note:'✅ 15:00 場次，14:45 報到｜集合：埜のてらす 內 野あそびベース フリルフスリフ（札幌市南區定山溪溫泉西4丁目371）｜約 90–120 分鐘｜📷 日落 16:53 會在河上 —— 相機要有防水袋，10 月中河水很冰，帶保暖衣物與替換衣物｜⏳ 預約編號待填'},
+    {id:'d8i7', time:'16:53', type:'photo', title:'Sunset', note:'這時人在河上'},
+    {id:'d8i8', time:'17:15', type:'sleep', title:'Checkin 定山溪有樂草庵', noTime:true, note:'⏳ 旅館晚餐時段要先約好，建議 18:00 以後，才來得及 19:30 去夏燈路'},
+    {id:'d8i9', time:'19:30', type:'sight', title:'夏燈路（定山溪神社／岩戶觀音堂／定山源泉公園）', note:'✅ 2026 年辦到 10/31｜9–10 月 18:00–21:30（最後入場 21:15）｜定山溪神社有投影秀、定山源泉公園約 200 盞燈籠＋足湯'}
+  ]
+},
+{
+  id:'d9', label:'D9', date:'2026-10-17', sub:'定山溪 → 羊蹄山 → 札幌',
+  items:[
+    {id:'d9i0', time:'05:00', type:'transit', title:'ゆらく草庵 → 中山峠', from:'ゆらく草庵', to:'中山峠', durationMin:40, note:'🦌 國道 230 號清晨鹿多｜❄️ 中山峠海拔 835 公尺，10 月中旬清晨可能結霜'},
+    {id:'d9i1', time:'05:40', type:'sight', title:'中山峠（羊蹄山日出）', durationMin:45, note:'📷 日出 05:51，太陽在身後，第一道光打在羊蹄山東面'},
+    {id:'d9i2', time:'05:51', type:'photo', title:'Sunrise'},
+    {id:'d9i3', time:'06:30', type:'transit', title:'中山峠 → 喜茂別', from:'中山峠', to:'喜茂別', durationMin:20},
+    {id:'d9i4', time:'06:50', type:'sight', title:'喜茂別（羊蹄山田園景觀）', durationMin:40, note:'選擇性：時間緊就只拍中山峠'},
+    {id:'d9i5', time:'07:30', type:'transit', title:'喜茂別 → ゆらく草庵', from:'喜茂別', to:'ゆらく草庵', durationMin:55},
+    {id:'d9i6', time:'08:30', type:'meal', title:'旅館早餐', durationMin:60, note:'⏳ 先跟旅館確認早餐最晚時段'},
+    {id:'d9i7', time:'10:30', type:'transit', title:'定山溪 → 札幌', from:'定山溪', to:'札幌', durationMin:60, note:'目標中午前回到札幌'},
+    {id:'d9i8', time:'11:45', type:'meal', title:'札幌午餐', durationMin:60, note:'湯咖哩、成吉思汗都是札幌代表'},
+    {id:'d9i9', time:'13:00', type:'sight', title:'赤れんが庁舎', durationMin:60, note:'2025 年 7 月整修完成重新開放｜8:45–21:00｜門票 ¥300｜白天、夜間都能拍，前庭有紅黃葉'},
+    {id:'d9i10', time:'14:10', type:'sight', title:'北大銀杏並木（選擇性）', durationMin:40, note:'高峰通常在 10 月下旬–11 月初，10/17 大概還偏綠，順路再去'},
+    {id:'d9i11', time:'15:00', type:'sleep', title:'札幌住宿（待確認）', noTime:true, note:'⏳ 還沒定案｜停車條件同 D1'},
+    {id:'d9i12', time:'15:40', type:'transit', title:'飯店 → 藻岩山', from:'飯店', to:'藻岩山', durationMin:25, note:'🅿️ 可開車走藻岩山觀光道路直上中腹站（停車場約 80 台，滿了入口就管制），或停山麓站搭纜車；週六傍晚人多，早點到'},
+    {id:'d9i13', time:'16:10', type:'sight', title:'藻岩山展望台（日落＋夜景）', durationMin:150, note:'纜車＋迷你纜車來回 ¥1,800｜10 月 10:30–22:00（纜車上山末班 21:30）｜日落 16:51 → 16:15 前到山頂卡位，一路拍日落、藍調、夜景'},
+    {id:'d9i14', time:'16:51', type:'photo', title:'Sunset'},
+    {id:'d9i15', time:'19:00', type:'meal', title:'札幌晚餐', noTime:true}
+  ]
+},
+{
+  id:'d10', label:'D10', date:'2026-10-18', sub:'札幌 → 新千歲 → 台灣',
+  items:[
+    {id:'d10i0', time:'05:50', type:'photo', title:'Sunrise'},
+    {id:'d10i1', time:'08:00', type:'errand', title:'還車（時間、地點待填）', noTime:true, note:'⏳ 還車時間與地點待填｜如果在札幌市中心還車，去新千歲要改搭 JR 快速 Airport（約 40 分鐘）｜多數租車公司要求加滿油還車，保留加油收據'},
+    {id:'d10i2', time:'10:00', type:'other', title:'新千歲 → 台灣（航班待填）', icon:'✈️', noTime:true, note:'⏳ 航班資訊待填｜新千歲國內線航廈的伴手禮街很大，國際線出境前可以先去逛（留足時間）'},
+    {id:'d10i3', time:'16:49', type:'photo', title:'Sunset', note:'此時應已離開北海道，數值為札幌當地日落時間'}
+  ]
+}]};
+
+let STATE = null;
+let currentDayId = null;
+let editingItemId = null;
+
+function timeToMin(t){ if(!t) return null; const p=t.replace(':',''); return parseInt(p.slice(0,2))*60+parseInt(p.slice(2,4)); }
+function minToTime(m){ m=((m%1440)+1440)%1440; return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0'); }
+function fmtDuration(min){
+  if(min==null||isNaN(min)) return '';
+  const h=Math.floor(min/60), m=min%60;
+  if(h===0) return `${m}m`;
+  if(m===0) return `${h}h`;
+  return `${h}h${m}m`;
+}
+function findCoords(str){
+  if(!str) return null;
+  let best=null, bestEnd=-1, bestLen=0;
+  for(const p of PLACES){
+    if(p.key==='custom') continue;
+    for(const k of p.keys){
+      const idx=str.lastIndexOf(k);
+      if(idx<0) continue;
+      const end=idx+k.length;
+      if(end>bestEnd || (end===bestEnd && k.length>bestLen)){ bestEnd=end; bestLen=k.length; best=p; }
+    }
+  }
+  return best;
+}
+function mapLinksHtml(name){
+  if(!name) return '';
+  const c=findCoords(name);
+  if(!c){
+    return `<div class="mapLinks mapLinksMissing">📍 找不到對應地圖座標，請自行在地圖 App 搜尋「${name}」</div>`;
+  }
+  const q=encodeURIComponent(c.q||name);
+  const appleUrl = `https://maps.apple.com/?ll=${c.lat},${c.lng}&q=${q}`;
+  const googleUrl = c.q ? `https://www.google.com/maps/search/?api=1&query=${q}` : `https://www.google.com/maps/search/?api=1&query=${c.lat},${c.lng}`;
+  return `<div class="mapLinks"><a href="${appleUrl}" target="_blank" rel="noopener">🍎 Apple Maps</a><a href="${googleUrl}" target="_blank" rel="noopener">🗺️ Google Maps</a></div>`;
+}
+async function fetchLocationImage(query){
+  const url=`https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrnamespace=6&gsrlimit=1&prop=imageinfo&iiprop=url&iiurlwidth=800&format=json&origin=*`;
+  const res=await fetchWithTimeout(url,6000);
+  const data=await res.json();
+  const pages=data && data.query && data.query.pages;
+  if(!pages) throw new Error('無圖片');
+  const page=Object.values(pages)[0];
+  const info=page && page.imageinfo && page.imageinfo[0];
+  if(!info) throw new Error('無圖片');
+  return {thumb:info.thumburl||info.url, page:info.descriptionurl};
+}
+function compressImageFile(file, maxDim=560, quality=0.6){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        let w=img.width, h=img.height;
+        if(w>h){ if(w>maxDim){ h=Math.round(h*maxDim/w); w=maxDim; } }
+        else { if(h>maxDim){ w=Math.round(w*maxDim/h); h=maxDim; } }
+        const canvas=document.createElement('canvas');
+        canvas.width=w; canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror=()=>reject(new Error('image load failed'));
+      img.src=reader.result;
+    };
+    reader.onerror=()=>reject(new Error('file read failed'));
+    reader.readAsDataURL(file);
+  });
+}
+
+function fmtT(d){ if(!d||isNaN(d)) return '--:--'; return d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Tokyo'}); }
+
+const SEED_VERSION = '2026-09-27d';
+function loadState(){
+  let state=null;
+  try{
+    const raw = localStorage.getItem('hokkaido-trip-data');
+    if(raw) state = JSON.parse(raw);
+  }catch(e){}
+  if(!state) {
+    try{ localStorage.setItem('hokkaido-seed-version', SEED_VERSION); }catch(e){}
+    return JSON.parse(JSON.stringify(SEED));
+  }
+  // 若 SEED 版本更新，直接以新版行程覆蓋（使用者自行新增的天數會保留）
+  let savedVer=null;
+  try{ savedVer = localStorage.getItem('hokkaido-seed-version'); }catch(e){}
+  if(savedVer !== SEED_VERSION){
+    const seedIds=new Set(SEED.days.map(d=>d.id));
+    const userAdded=state.days.filter(d=>!seedIds.has(d.id));
+    const fresh=JSON.parse(JSON.stringify(SEED));
+    fresh.days=[...fresh.days,...userAdded].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+    try{ localStorage.setItem('hokkaido-seed-version', SEED_VERSION); }catch(e){}
+    window.__seedJustUpgraded=true;
+    return fresh;
+  }
+  const existingIds=new Set(state.days.map(d=>d.id));
+  const missing=SEED.days.filter(sd=>!existingIds.has(sd.id)).map(sd=>JSON.parse(JSON.stringify(sd)));
+  if(missing.length){
+    state.days=[...state.days,...missing].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+  }
+  return state;
+}
+function saveState(){
+  const json=JSON.stringify(STATE);
+  const sizeKB=Math.round(json.length/1024);
+  try{
+    localStorage.setItem('hokkaido-trip-data', json);
+  } catch(e){
+    console.error('save failed',e);
+    alert(`儲存失敗（目前整份行程資料約 ${sizeKB} KB）。瀏覽器本機儲存空間可能已滿或被封鎖（例如無痕模式），建議刪除幾張舊照片後再試一次。`);
+  }
+}
+
+function addDay(){
+  const label=prompt('這天怎麼標示？例如 D11'); if(!label) return;
+  const date=prompt('日期？格式 YYYY-MM-DD','2026-10-18'); if(!date) return;
+  const id='d'+Date.now();
+  STATE.days.push({id,label,date,sub:'',items:[]});
+  currentDayId=id; saveState(); saveDaysSync(); renderAll();
+}
+function goToDay(delta){
+  const idx=STATE.days.findIndex(d=>d.id===currentDayId);
+  const newIdx=idx+delta;
+  if(newIdx<0 || newIdx>=STATE.days.length) return;
+  currentDayId=STATE.days[newIdx].id;
+  renderAll();
+}
+(function initSwipe(){
+  const zone=document.body;
+  const isItineraryActive=()=>!document.getElementById('view-itinerary').hidden;
+  let sx=0, sy=0, swiped=false, dragging=false;
+  zone.addEventListener('touchstart', e=>{
+    if(!isItineraryActive()) return;
+    const t=e.touches[0]; sx=t.clientX; sy=t.clientY; swiped=false;
+  }, {passive:true});
+  zone.addEventListener('touchend', e=>{
+    if(!isItineraryActive()) return;
+    const t=e.changedTouches[0];
+    const dx=t.clientX-sx, dy=t.clientY-sy;
+    if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)*1.5){
+      swiped=true;
+      goToDay(dx>0?-1:1);
+    }
+  }, {passive:true});
+  zone.addEventListener('mousedown', e=>{
+    if(!isItineraryActive()) return;
+    if(e.target.closest('input, textarea, select, button, a, label')) return;
+    sx=e.clientX; sy=e.clientY; swiped=false; dragging=true;
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', e=>{
+    if(dragging) e.preventDefault();
+  });
+  window.addEventListener('mouseup', e=>{
+    if(!dragging) return;
+    dragging=false;
+    const dx=e.clientX-sx, dy=e.clientY-sy;
+    if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)*1.5){
+      swiped=true;
+      goToDay(dx>0?-1:1);
+    }
+  });
+  zone.addEventListener('click', e=>{
+    if(swiped){ e.stopPropagation(); e.preventDefault(); swiped=false; }
+  }, true);
+})();
+
+let gpsCoords=null;
+function getGpsCoords(){
+  return new Promise(resolve=>{
+    if(gpsCoords){ resolve(gpsCoords); return; }
+    if(!navigator.geolocation){ resolve(null); return; }
+    navigator.geolocation.getCurrentPosition(
+      pos=>{ gpsCoords={lat:pos.coords.latitude, lng:pos.coords.longitude}; resolve(gpsCoords); },
+      ()=>resolve(null),
+      {timeout:8000, maximumAge:600000}
+    );
+  });
+}
+
+let heroWxReqId=0;
+async function renderDayHeroWeather(day){
+  const box=document.getElementById('dayHeroWeather');
+  const myReq=++heroWxReqId;
+
+  const transitItems = day.items.filter(it=>it.type==='transit' && it.icon!=='✈️' && it.icon!=='🚐' && it.icon!=='⛴️' && it.icon!=='🚶' && it.icon!=='🚆' && it.icon!=='🚇');
+  const transitMin = transitItems.reduce((s,it)=>s+(it.durationMin||0),0);
+  const driveLabel = transitMin>0 ? `開車約 ${fmtDuration(transitMin)}` : '';
+  const routeHtml = day.sub ? `<div class="dayHeroRoute">${day.sub}</div>${driveLabel?`<div class="dayHeroDrive">${driveLabel}</div>`:''}` : '';
+
+  box.innerHTML=routeHtml+'<div class="heroWxMsg">讀取目前位置中…</div>';
+
+  const coords=await getGpsCoords();
+  if(myReq!==heroWxReqId) return;
+  if(!coords){
+    box.innerHTML=routeHtml+'<div class="heroWxMsg">📍 無法取得目前位置，請允許瀏覽器的定位權限後重新整理頁面</div>';
+    return;
+  }
+
+  box.innerHTML=routeHtml+'<div class="heroWxMsg">讀取天氣中…</div>';
+  const todayStr=new Date().toISOString().slice(0,10);
+  let sunLine='';
+  if(typeof SunCalc!=='undefined'){
+    const t=SunCalc.getTimes(new Date(), coords.lat, coords.lng);
+    const fmtLocal=d=>{ if(!d||isNaN(d)) return '--:--'; return d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false}); };
+    sunLine=`<div class="heroWxSun">日出 ${fmtLocal(t.sunrise)}　日落 ${fmtLocal(t.sunset)}</div>`;
+  }
+
+  const [curRes, dailyRes] = await Promise.allSettled([
+    fetchCurrentConditions(coords.lat, coords.lng),
+    fetchDailyForecast(coords.lat, coords.lng, todayStr)
+  ]);
+  if(myReq!==heroWxReqId) return;
+
+  let topLine;
+  if(dailyRes.status==='fulfilled'){
+    const {tmax,tmin,windSpeed,windGust,windDir}=dailyRes.value;
+    const code = curRes.status==='fulfilled' ? curRes.value.code : null;
+    const isDay = curRes.status==='fulfilled' ? curRes.value.isDay : 1;
+    const wc = weatherIconFor(code, isDay);
+    const curTemp = curRes.status==='fulfilled' ? curRes.value.temp : null;
+    topLine=`<div class="heroWxRow"><span class="heroWxIcon">${wc.icon}</span><span class="heroWxTemp">${curTemp==null?'--':Math.round(curTemp)}°</span><span class="heroWxCond">${wc.label}</span></div>`;
+    const {pprob,uv}=dailyRes.value;
+    topLine += `<div class="heroWxGrid">
+      <div class="heroWxStat">降雨：${pprob==null?'--':pprob+'%'}</div>
+      <div class="heroWxStat">UV：${uv==null?'--':uv.toFixed(1)}</div>
+      <div class="heroWxStat">風速：${windSpeed==null?'--':Math.round(windSpeed)}/${windGust==null?'--':Math.round(windGust)} ${windDirLabel(windDir)||''}</div>
+    </div>`;
+  } else {
+    topLine='<div class="heroWxMsg">尚無今天的天氣預報（超出 16 天預報範圍）</div>';
+  }
+  box.innerHTML = routeHtml + topLine + sunLine;
+}
+
+function renderDay(){
+  const day=STATE.days.find(d=>d.id===currentDayId);
+  const dayIdx=STATE.days.findIndex(d=>d.id===currentDayId);
+  document.getElementById('dayHeroLabel').textContent = day.label;
+  document.getElementById('dayHeroDate').textContent = day.date ? day.date.slice(5).replace('-','/') : '';
+  const upBtn=document.getElementById('dayArrowUp'), downBtn=document.getElementById('dayArrowDown');
+  upBtn.disabled = dayIdx<=0;
+  downBtn.disabled = dayIdx>=STATE.days.length-1;
+  upBtn.onclick=()=>goToDay(-1);
+  downBtn.onclick=()=>goToDay(1);
+  renderDayHeroWeather(day);
+  const sortedItems=[...day.items].sort((a,b)=>timeToMin(a.time)-timeToMin(b.time));
+
+  document.getElementById('daySummary').innerHTML='';
+
+  const list=document.getElementById('itemList'); list.innerHTML='';
+  sortedItems.forEach(it=>{
+    const meta=TYPE_META[it.type]||TYPE_META.other;
+    let ttlText, locLine;
+    if(it.type==='transit'){
+      const arrival = it.arrivalTime || (it.durationMin!=null ? minToTime(timeToMin(it.time)+it.durationMin) : '?');
+      const durLabel = fmtDuration(it.durationMin);
+      const durKm = [durLabel, it.km!=null?it.km+'km':''].filter(Boolean).join('・');
+      ttlText = `${it.from||'?'} → ${arrival} ${it.to||'?'}${durKm?'('+durKm+')':''}`;
+      locLine = '';
+    } else {
+      const durLabel = fmtDuration(it.durationMin);
+      ttlText = `${it.title}${durLabel?'('+durLabel+')':''}`;
+      locLine = '';
+    }
+    const place = it.type==='sight' ? findCoords(it.title) : null;
+    const div=document.createElement('div');
+    div.className='item'+(it.type==='transit'?' item-transit':it.type==='photo'?' item-photo':'');
+    div.dataset.open=it.id;
+    div.innerHTML = `
+      <div class="itemIcon">${it.icon||meta.icon}</div>
+      <div class="time mono">${it.noTime?'－':it.time}</div>
+      <div class="body">
+        <div class="ttl">${ttlText}</div>
+        ${locLine?`<div class="meta">${locLine}</div>`:''}
+        ${place&&place.blurb?`<div class="blurb">${place.blurb}</div>`:''}
+        ${it.note?`<div class="note">📝 ${it.note}</div>`:''}
+      </div>
+      <div class="itemChevron">›</div>`;
+    list.appendChild(div);
+  });
+  list.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openItemForm(b.dataset.open));
+}
+
+function openItemForm(itemId){
+  editingItemId=itemId||null;
+  const day=STATE.days.find(d=>d.id===currentDayId);
+  const existing=itemId?day.items.find(x=>x.id===itemId):null;
+  const old=document.getElementById('itemFormEl'); if(old) old.remove();
+  const f=document.createElement('form');
+  f.className='itemForm'; f.id='itemFormEl';
+  f.innerHTML = `
+    <div id="locPhotoBox"></div>
+    <div class="formRow">
+      <div><label>時間</label><input type="time" name="time" required value="${existing?existing.time:''}"></div>
+      <div><label>類型</label><select name="type">${Object.entries(TYPE_META).map(([k,v])=>`<option value="${k}" ${existing&&existing.type===k?'selected':''}>${v.icon} ${v.label}</option>`).join('')}</select></div>
+    </div>
+    <div><label>標題</label><input type="text" name="title" required value="${existing?existing.title:''}"></div>
+    <div id="locFields"></div>
+    <div class="formRow">
+      <div><label>時長（分鐘）</label><input type="number" name="durationMin" value="${existing&&existing.durationMin?existing.durationMin:''}"></div>
+      <div id="arrivalWrap"><label>到達時間（交通用，選填）</label><input type="time" name="arrivalTime" value="${existing&&existing.arrivalTime?existing.arrivalTime:''}"></div>
+    </div>
+    <div id="formMapLinks"></div>
+    <div>
+      <label>照片</label>
+      <input type="file" accept="image/*" id="photoInput">
+      <div id="photoPreviewWrap"></div>
+    </div>
+    <div><label>備註</label><textarea name="note" rows="2">${existing&&existing.note?existing.note:''}</textarea></div>
+    <div class="formActions">
+      ${existing?'<button type="button" class="btn danger" id="deleteItemBtn">🗑️ 刪除</button>':''}
+      <button type="button" class="btn" id="cancelForm">取消</button>
+      <button type="submit" class="btn primary">${existing?'儲存':'新增'}</button>
+    </div>`;
+  const cardEl = existing ? document.querySelector(`[data-open="${existing.id}"]`) : null;
+  if(cardEl) cardEl.replaceWith(f);
+  else document.getElementById('itemList').before(f);
+  let pendingPhotoData = existing&&existing.photoData ? existing.photoData : null;
+  function renderPhotoPreview(){
+    const wrap=f.querySelector('#photoPreviewWrap');
+    if(pendingPhotoData){
+      wrap.innerHTML=`<div class="photoPreview"><img src="${pendingPhotoData}"><button type="button" class="rmBtn" id="removePhotoBtn">✕</button></div>`;
+      wrap.querySelector('#removePhotoBtn').onclick=()=>{ pendingPhotoData=null; f.querySelector('#photoInput').value=''; renderPhotoPreview(); };
+    } else {
+      wrap.innerHTML='';
+    }
+  }
+  renderPhotoPreview();
+  f.querySelector('#photoInput').onchange=async()=>{
+    const file=f.querySelector('#photoInput').files[0];
+    if(!file) return;
+    try{ pendingPhotoData=await compressImageFile(file); renderPhotoPreview(); }
+    catch(e){ alert('照片讀取失敗，換一張試試'); }
+  };
+  function renderFormMapLinks(){
+    const wrap=f.querySelector('#formMapLinks');
+    if(!existing){ wrap.innerHTML=''; return; }
+    wrap.innerHTML = mapLinksHtml(existing.title);
+  }
+  renderFormMapLinks();
+  (function loadLocPhoto(){
+    const box=f.querySelector('#locPhotoBox');
+    if(!existing){ box.remove(); return; }
+    const locStr = existing.type==='transit' ? (existing.to||existing.from) : existing.title;
+    if(!locStr){ box.remove(); return; }
+    const place=findCoords(locStr);
+    const query = place ? (place.photoQuery||place.label) : locStr;
+    box.innerHTML='<div class="weatherMsg" style="padding:18px 0">讀取地點照片中…</div>';
+    fetchLocationImage(query).then(img=>{
+      if(!document.body.contains(f)) return;
+      box.innerHTML = `<div class="locPhoto"><img src="${img.thumb}" alt=""><a href="${img.page}" target="_blank" rel="noopener" class="locPhotoCredit">圖片來源：Wikimedia Commons</a></div>`;
+    }).catch(()=>{ if(document.body.contains(f)) box.remove(); });
+  })();
+  function syncLocFields(){
+    const type=f.type.value;
+    const wrap=f.querySelector('#locFields');
+    if(type==='transit'){
+      wrap.innerHTML=`<div class="formRow"><div><label>出發地</label><input type="text" name="from" value="${existing&&existing.from?existing.from:''}"></div><div><label>目的地</label><input type="text" name="to" value="${existing&&existing.to?existing.to:''}"></div></div>`;
+      f.querySelector('#arrivalWrap').style.display='';
+    } else {
+      wrap.innerHTML='';
+      f.querySelector('#arrivalWrap').style.display='none';
+    }
+  }
+  syncLocFields();
+  f.type.onchange=syncLocFields;
+  f.querySelector('#cancelForm').onclick=()=>{ f.remove(); editingItemId=null; renderDay(); };
+  if(existing){
+    f.querySelector('#deleteItemBtn').onclick=()=>{
+      if(!confirm('刪除這個項目？')) return;
+      day.items=day.items.filter(x=>x.id!==existing.id);
+      saveState(); saveDaysSync(); f.remove(); editingItemId=null; renderDay();
+    };
+  }
+  f.onsubmit=(e)=>{
+    e.preventDefault();
+    const fd=new FormData(f);
+    const item={
+      id: existing?existing.id:'i'+Date.now(),
+      time: fd.get('time'), type: fd.get('type'), title: fd.get('title'),
+      durationMin: fd.get('durationMin')?parseInt(fd.get('durationMin')):undefined,
+      note: fd.get('note')||undefined, photoData: pendingPhotoData||undefined
+    };
+    if(item.type==='transit'){ item.from=fd.get('from')||undefined; item.to=fd.get('to')||undefined; item.arrivalTime=fd.get('arrivalTime')||undefined; }
+    if(existing){
+      Object.assign(existing,item);
+      for(const k of ['from','to','arrivalTime','location','photoData']) if(item[k]===undefined) delete existing[k];
+    }
+    else day.items.push(item);
+    saveState(); saveDaysSync(); f.remove(); editingItemId=null; renderDay();
+  };
+}
+
+function renderWeatherPlaceSelect(){
+  const sel=document.getElementById('weatherPlaceSelect');
+  sel.innerHTML = PLACES.map(p=>`<option value="${p.key}">${p.label}</option>`).join('');
+  sel.onchange=()=>{
+    document.getElementById('weatherCustomCoords').hidden = sel.value!=='custom';
+    renderWeather();
+  };
+  document.getElementById('weatherDateInput').onchange=renderWeather;
+  document.getElementById('weatherLatInput').oninput=renderWeather;
+  document.getElementById('weatherLngInput').oninput=renderWeather;
+  const today=new Date();
+  document.getElementById('weatherDateInput').value=today.toISOString().slice(0,10);
+  const maxD=new Date(today); maxD.setDate(maxD.getDate()+15);
+  document.getElementById('weatherDateInput').max=maxD.toISOString().slice(0,10);
+}
+
+let weatherReqId=0;
+
+// 帶逾時保護的 fetch：避免任何一個網路請求卡住不動時，整個天氣讀取被無限期卡死
+async function fetchWithTimeout(url, timeoutMs=8000){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(), timeoutMs);
+  try{
+    return await fetch(url, {signal:controller.signal});
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function fetchCurrentConditions(lat,lng){
+  const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,weather_code,is_day&timezone=auto&wind_speed_unit=ms`;
+  const res=await fetchWithTimeout(url);
+  const data=await res.json();
+  if(data.error||!data.current) throw new Error(data.reason||'無法取得即時天氣');
+  return {temp:data.current.temperature_2m, code:data.current.weather_code, isDay:data.current.is_day};
+}
+
+async function fetchDailyForecast(lat,lng,dateStr){
+  const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant&timezone=auto&wind_speed_unit=ms&start_date=${dateStr}&end_date=${dateStr}`;
+  const res=await fetchWithTimeout(url);
+  const data=await res.json();
+  if(data.error) throw new Error(data.reason||'查詢失敗');
+  const d=data.daily;
+  if(!d||!d.time||!d.time.length) throw new Error('沒有這天的資料');
+  return {
+    tmax:d.temperature_2m_max[0], tmin:d.temperature_2m_min[0], pprob:d.precipitation_probability_max[0], uv:d.uv_index_max[0],
+    windSpeed:d.wind_speed_10m_max?.[0], windGust:d.wind_gusts_10m_max?.[0], windDir:d.wind_direction_10m_dominant?.[0]
+  };
+}
+
+async function renderWeather(){
+  const key=document.getElementById('weatherPlaceSelect').value;
+  const place=PLACES.find(p=>p.key===key);
+  let lat=place.lat, lng=place.lng;
+  if(key==='custom'){ lat=parseFloat(document.getElementById('weatherLatInput').value); lng=parseFloat(document.getElementById('weatherLngInput').value); }
+  const dateStr=document.getElementById('weatherDateInput').value;
+  const panel=document.getElementById('weatherPanel');
+  if(isNaN(lat)||isNaN(lng)||!dateStr){
+    panel.innerHTML='<div class="weatherMsg">請選擇地點與日期</div>';
+    return;
+  }
+  const myReq=++weatherReqId;
+  panel.innerHTML='<div class="weatherMsg">讀取天氣中…</div>';
+
+  try{
+    let sunHtml='', noNight=false;
+    if(typeof SunCalc!=='undefined'){
+      const t=SunCalc.getTimes(new Date(dateStr+'T12:00:00'), lat, lng);
+      noNight=isNaN(t.night);
+      sunHtml=`<div class="sunRow"><span>🌅 日出 ${fmtT(t.sunrise)}</span><span>🌇 日落 ${fmtT(t.sunset)}</span></div>`;
+    }
+
+    const [curRes, dailyRes] = await Promise.allSettled([
+      fetchCurrentConditions(lat,lng),
+      fetchDailyForecast(lat,lng,dateStr)
+    ]);
+    if(myReq!==weatherReqId) return;
+
+  let headHtml;
+  if(curRes.status==='fulfilled'){
+    const {temp,code}=curRes.value;
+    const wc=WEATHER_CODE_MAP[code]||{icon:'❓',label:'未知'};
+    headHtml=`<div class="weatherHead">
+      <div class="icon">${wc.icon}</div>
+      <div class="whMain"><div class="cond">${wc.label}</div><div class="whSub">${place.label}　·　現在</div></div>
+      <div class="whTemp">${temp==null?'--':Math.round(temp)}°</div>
+    </div>`;
+  } else {
+    headHtml=`<div class="weatherMsg">⚠️ 無法取得目前天氣<div class="sub">請檢查網路連線</div></div>`;
+  }
+
+  let dailyHtml=`<div class="dateLabel">📅 ${dateStr} 預報</div>`;
+  if(dailyRes.status==='fulfilled'){
+    const {tmax,tmin,pprob,uv,windSpeed,windGust,windDir}=dailyRes.value;
+    const uvInfo=uvLevel(uv);
+    const windInfo=windLevel(windSpeed);
+    dailyHtml += `<div class="weatherGrid">
+      <div class="stat"><div class="lbl">溫度</div><div class="val">${tmin==null?'--':Math.round(tmin)}° / ${tmax==null?'--':Math.round(tmax)}°</div></div>
+      <div class="stat teal"><div class="lbl">降雨機率</div><div class="val">${pprob==null?'--':pprob+'%'}</div></div>
+      <div class="stat"><div class="lbl">UV 強度</div><div class="val" style="color:${uvInfo.color}">${uv==null?'--':uv.toFixed(1)}${uvInfo.label?' '+uvInfo.label:''}</div></div>
+      <div class="stat"><div class="lbl">風力／陣風</div><div class="val" style="color:${windInfo.color}">${windSpeed==null?'--':Math.round(windSpeed)} / ${windGust==null?'--':Math.round(windGust)} m/s</div>${windInfo.label?`<div class="lbl" style="margin-top:2px;color:${windInfo.color}">${windInfo.label}</div>`:''}</div>
+      <div class="stat"><div class="lbl">風向</div><div class="val"><span class="windArrow" style="display:inline-block;transform:rotate(${windDir==null?0:windDir}deg)">↓</span> ${windDirLabel(windDir)||'--'}</div></div>
+    </div>`;
+  } else {
+    dailyHtml += `<div class="weatherMsg">⚠️ 這個日期還查不到天氣預報<div class="sub">Open-Meteo 通常只提供未來 16 天內的預報，請靠近出發日期再查看</div></div>`;
+  }
+
+  const koyoHtml = `<div class="auroraBox">
+    <div class="lbl">🍁 紅葉進度</div>
+    <div class="sub">高海拔（十勝岳、層雲峽黑岳、三國峠、青池）10 月初最盛 → 道東（阿寒、屈斜路、摩周）10 月上中旬 → 定山溪、札幌 10 月中下旬。順時針路線就是照這個順序排的。每天出發前看一次最新進度：<br><a href="https://tenki.jp/kouyou/" target="_blank" rel="noopener">tenki.jp 紅葉情報 →</a></div>
+    ${noNight?'':''}
+  </div>`;
+
+  const vedurHtml = `<div class="vedurBox">
+    <div class="lbl">🇯🇵 想跟官方數據交叉確認？</div>
+    <div class="sub">山區天氣以日本氣象廳為準；清晨要過山口（三國峠、石北峠、中山峠）前，另外看峠的氣溫與路面：<br><a href="https://www.jma.go.jp/bosai/forecast/" target="_blank" rel="noopener">日本氣象廳 預報 →</a>　<a href="https://northern-road.ceri.go.jp/navi/touge/index_touge.htm" target="_blank" rel="noopener">北の道ナビ 峠情報 →</a></div>
+  </div>`;
+
+  panel.innerHTML = headHtml + sunHtml + dailyHtml + koyoHtml + vedurHtml
+    + `<p style="font-size:11px;color:var(--ink-3);margin-top:14px;text-align:center">資料來源：Open-Meteo.com</p>`;
+  }catch(e){
+    if(myReq!==weatherReqId) return;
+    panel.innerHTML = `<div class="weatherMsg">⚠️ 讀取天氣時發生問題<div class="sub">請檢查網路連線，或重新選擇地點／日期再試一次</div></div>`;
+  }
+}
+
+function renderAll(){
+  renderDay();
+}
+
+function ensureSplitState(){
+  if(!STATE.people) STATE.people=['旅伴 A','旅伴 B','旅伴 C','旅伴 D'];
+  if(!STATE.expenses) STATE.expenses=[];
+}
+let daysSyncing=false;
+function saveDaysSync(){
+  if(window.firebaseSync && window.firebaseSync.ready && !daysSyncing){
+    const cleanDays = STATE.days.map(d=>({
+      ...d,
+      items: d.items.map(it=>{ const {photoData, ...rest} = it; return rest; })
+    }));
+    window.firebaseSync.save({days:cleanDays, updatedAt:Date.now()});
+  }
+}
+function initDaysSync(){
+  function setupListener(){
+    if(!window.firebaseSync || !window.firebaseSync.ready) return;
+    // 若本次是 SEED 版本更新，先把新行程推上雲端，避免被舊資料蓋回去
+    if(window.__seedJustUpgraded){
+      window.__seedJustUpgraded=false;
+      saveDaysSync();
+    }
+    window.firebaseSync.listen(data=>{
+      if(data && data.days){
+        daysSyncing=true;
+        data.days.forEach(remoteDay=>{
+          const localDay = STATE.days.find(d=>d.id===remoteDay.id);
+          if(localDay){
+            remoteDay.items.forEach(remoteIt=>{
+              const localIt = localDay.items.find(it=>it.id===remoteIt.id);
+              if(localIt && localIt.photoData) remoteIt.photoData = localIt.photoData;
+            });
+          }
+        });
+        STATE.days = data.days;
+        if(!STATE.days.find(d=>d.id===currentDayId)) currentDayId = STATE.days[0].id;
+        saveState();
+        renderAll();
+        daysSyncing=false;
+      } else {
+        saveDaysSync();
+      }
+    });
+  }
+  if(window.firebaseSync){ setupListener(); }
+  else{ window.addEventListener('firebase-ready', setupListener, {once:true}); }
+}
+function calcBalances(){
+  const n=STATE.people.length;
+  const paid=new Array(n).fill(0), owed=new Array(n).fill(0);
+  STATE.expenses.forEach(e=>{
+    paid[e.payer] += e.amount;
+    const among = e.splitAmong && e.splitAmong.length ? e.splitAmong : STATE.people.map((_,i)=>i);
+    const share = e.amount/among.length;
+    among.forEach(i=>owed[i]+=share);
+  });
+  return STATE.people.map((name,i)=>({name, paid:paid[i], owed:owed[i], net:paid[i]-owed[i]}));
+}
+function simplifyDebts(balances){
+  const creditors = balances.filter(b=>b.net>0.5).map(b=>({name:b.name, amt:b.net})).sort((a,b)=>b.amt-a.amt);
+  const debtors = balances.filter(b=>b.net<-0.5).map(b=>({name:b.name, amt:-b.net})).sort((a,b)=>b.amt-a.amt);
+  const tx=[]; let i=0,j=0;
+  while(i<debtors.length && j<creditors.length){
+    const pay=Math.min(debtors[i].amt, creditors[j].amt);
+    tx.push({from:debtors[i].name, to:creditors[j].name, amt:pay});
+    debtors[i].amt-=pay; creditors[j].amt-=pay;
+    if(debtors[i].amt<0.5) i++;
+    if(creditors[j].amt<0.5) j++;
+  }
+  return tx;
+}
+function renderSplit(){
+  const peopleWrap=document.getElementById('splitPeople'); peopleWrap.innerHTML='';
+  STATE.people.forEach((name,i)=>{
+    const chip=document.createElement('div');
+    chip.className='chip'; chip.textContent=name;
+    chip.onclick=()=>{
+      const nv=prompt('這位的名字？', name);
+      if(nv){ STATE.people[i]=nv; saveState(); renderSplit(); }
+    };
+    peopleWrap.appendChild(chip);
+  });
+
+  const balances=calcBalances();
+  const total=STATE.expenses.reduce((s,e)=>s+e.amount,0);
+  const tx=simplifyDebts(balances);
+  const sum=document.getElementById('splitSummary');
+  sum.innerHTML = `
+    <div class="splitTotal">總花費（¥）　<span class="mono">${total.toLocaleString()}</span></div>
+    <div class="balanceGrid">${balances.map(b=>`
+      <div class="balanceCard">
+        <div class="balanceName">${b.name}</div>
+        <div class="balanceVal ${b.net>0.5?'pos':b.net<-0.5?'neg':''}">${b.net>0.5?'+':''}${Math.round(b.net).toLocaleString()}</div>
+      </div>`).join('')}</div>
+    ${tx.length?`<div class="settleBox"><div class="settleTitle">💸 建議結算</div>${tx.map(t=>`<div class="settleLine">${t.from} → ${t.to}　<span class="mono">${Math.round(t.amt).toLocaleString()}</span></div>`).join('')}</div>`
+      : `<div class="settleBox"><div class="settleTitle">✅ 目前打平，不用轉帳</div></div>`}
+  `;
+
+  const list=document.getElementById('expenseList'); list.innerHTML='';
+  [...STATE.expenses].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).forEach(e=>{
+    const among = e.splitAmong && e.splitAmong.length ? e.splitAmong : STATE.people.map((_,i)=>i);
+    const div=document.createElement('div');
+    div.className='expenseItem';
+    div.innerHTML=`
+      <div class="expenseMain">
+        <div class="expenseDesc">${e.desc||'（無說明）'}</div>
+        <div class="expenseMeta">${e.date||''}　${STATE.people[e.payer]||'?'} 付款　由 ${among.length} 人分攤</div>
+      </div>
+      <div class="expenseAmt mono">${e.amount.toLocaleString()}</div>
+      <button class="iconbtn" data-del-exp="${e.id}">🗑️</button>`;
+    list.appendChild(div);
+  });
+  list.querySelectorAll('[data-del-exp]').forEach(b=>{
+    b.onclick=()=>{
+      if(!confirm('刪除這筆花費？')) return;
+      STATE.expenses=STATE.expenses.filter(x=>x.id!==b.dataset.delExp);
+      saveState(); renderSplit();
+    };
+  });
+}
+function openExpenseForm(){
+  const old=document.getElementById('expenseFormEl'); if(old) old.remove();
+  const f=document.createElement('form');
+  f.className='itemForm'; f.id='expenseFormEl';
+  f.innerHTML=`
+    <div><label>金額（日圓）</label><input type="number" name="amount" required min="0" step="1"></div>
+    <div><label>誰付的</label><select name="payer">${STATE.people.map((p,i)=>`<option value="${i}">${p}</option>`).join('')}</select></div>
+    <div><label>說明</label><input type="text" name="desc" placeholder="例如：晚餐、油錢、過路費、停車"></div>
+    <div><label>日期</label><input type="date" name="date" value="${new Date().toISOString().slice(0,10)}"></div>
+    <div>
+      <label>由誰分攤（預設全部）</label>
+      <div class="splitCheckRow">${STATE.people.map((p,i)=>`<label class="check"><input type="checkbox" name="among" value="${i}" checked> ${p}</label>`).join('')}</div>
+    </div>
+    <div class="formActions">
+      <button type="button" class="btn" id="cancelExpenseForm">取消</button>
+      <button type="submit" class="btn primary">新增</button>
+    </div>`;
+  document.getElementById('expenseList').before(f);
+  f.querySelector('#cancelExpenseForm').onclick=()=>{ f.remove(); };
+  f.onsubmit=e=>{
+    e.preventDefault();
+    const fd=new FormData(f);
+    const among=fd.getAll('among').map(Number);
+    STATE.expenses.push({
+      id:'e'+Date.now(),
+      amount: parseFloat(fd.get('amount'))||0,
+      payer: parseInt(fd.get('payer')),
+      desc: fd.get('desc')||'',
+      date: fd.get('date')||'',
+      splitAmong: among.length?among:STATE.people.map((_,i)=>i)
+    });
+    saveState(); f.remove(); renderSplit();
+  };
+}
+
+const TRIP_APPS = [
+  {name:'Visit Japan Web', category:'入境', desc:'日本官方入境＋海關申報，出發前填好拿 QR code，落地直接掃碼通關', web:'https://www.vjw.digital.go.jp/'},
+  {name:'tenki.jp 紅葉情報', category:'天氣與紅葉', desc:'日本氣象協會的各地紅葉進度（見頃／色づき始め），每天出發前看一次，決定當天先去哪', web:'https://tenki.jp/kouyou/'},
+  {name:'日本氣象廳（JMA）', category:'天氣與紅葉', desc:'官方預報與警報（大雨、強風、霜），山區天氣以這個為準', web:'https://www.jma.go.jp/bosai/forecast/'},
+  {name:'Windy.com', category:'天氣與紅葉', desc:'雲量、風力的視覺化地圖，判斷清晨雲海、無風倒影很好用', web:'https://www.windy.com/'},
+  {name:'北海道地區道路情報', category:'路況與安全', desc:'北海道開發局官方：國道即時封路、路面狀況與沿線即時監視器畫面', web:'https://info-road.hdb.hkd.mlit.go.jp/RoadInfo/index_gazou2.htm'},
+  {name:'北の道ナビ 峠情報', category:'路況與安全', desc:'各山口（峠）的氣溫、路面與即時影像 —— 三國峠、石北峠、中山峠清晨出發前必看', web:'https://northern-road.ceri.go.jp/navi/touge/index_touge.htm'},
+  {name:'ドラぷら（Drive Plaza）', category:'路況與安全', desc:'NEXCO 東日本官方，高速公路收費試算、施工與塞車資訊，也有 HEP 周遊券說明', web:'https://en.driveplaza.com/drawari/hokkaido_expass/'},
+  {name:'ひぐまっぷ（棕熊出沒地圖）', category:'路況與安全', desc:'北海道各地棕熊目擊通報地圖，清晨去青池、Onneto 前先查', web:'https://higumap.info/recent'},
+  {name:'TOMAMU 雲海預報', category:'景點', desc:'每天 15:00 前公布隔天雲海預報；2026 年雲海平台營業到 10/13（預定），本趟住宿日已結束，僅供參考', web:'https://www.snowtomamu.jp/summer/unkai/'},
+  {name:'Tabelog 食べログ', category:'餐廳', desc:'日本最大餐廳評價網站，查營業時間、公休日、可否訂位', web:'https://tabelog.com/'}
+];
+const MARKETS_COMPARE = [
+  {label:'特色', a:'北海道在地超商，店數比 7-11 還多，偏鄉常常只剩它', b:'全國連鎖，都市與主要道路沿線多', c:'大型超市，生鮮、熟食、伴手禮選擇最多'},
+  {label:'必買／必吃', a:'HOT CHEF 現做豬排丼、炸雞、飯糰；自有品牌北海道牛乳、零食', b:'甜點、咖啡、便當穩定', c:'傍晚熟食、壽司打折；北海道限定零食量大比較便宜'},
+  {label:'營業時間', a:'多數 24hr，但偏鄉部分店會關門，出發前查 Google Maps', b:'幾乎 24hr', c:'多為 9:00–22:00 左右'},
+  {label:'本趟用途', a:'道東長途移動補給、清晨出門買早餐', b:'札幌、旭川市區', c:'札幌最後一天買伴手禮'}
+];
+const MARKET_BUYS = [
+  {category:'甜點伴手禮', store:'新千歲機場／札幌', items:['白色戀人（石屋製菓）','ROYCE 生巧克力（需冷藏）','六花亭 奶油葡萄夾心餅','LeTAO 雙層起司蛋糕（需冷藏）','北菓樓 夢不思議泡芙']},
+  {category:'零食', store:'超商／AEON', items:['薯條三兄弟 Jaga Pokkuru','Calbee 北海道限定洋芋片','Seicomart 自有品牌零食']},
+  {category:'路上補給', store:'Seicomart', items:['HOT CHEF 豬排丼／炸雞（現做）','北海道牛乳','十勝紅豆麵包']},
+  {category:'泡湯、保暖', store:'藥妝／超市', items:['暖暖包（清晨拍照用）','護唇膏、乳液（10 月北海道很乾）']}
+];
+const FOOD_LIST = [
+  {name:'蟹座札幌（螃蟹吃到飽）', day:'D1 20:15 薄野', ingredients:['螃蟹涮涮鍋吃到飽：松葉蟹、金色帝王蟹、和牛','吃到飽 90 分鐘（座位 100 分鐘）'], steps:['17:00–22:30，最後點餐 21:00 → 20:15 入座別晚到','預約：autoreserve.com']},
+  {name:'湯咖哩 奥芝商店 站前創成寺', day:'D2 11:00 札幌', ingredients:['札幌代表性湯咖哩名店','蝦湯底是招牌'], steps:['週六中午人多，11:00 開門就進去']},
+  {name:'Ferme La Terre Biei', day:'D3 11:20 美瑛', ingredients:['美瑛小麥與牛奶的甜點、麵包、餐廳','招牌：大地布丁'], steps:['⚠️ 預約優先，線上預約到 3 天前截止（10/8 前）','電話 0120-544-417']},
+  {name:'ポテトアンドコー Potato&Co', day:'D3 15:45 美瑛', ingredients:['薯條專賣店，醬料種類多'], steps:['11:00–17:30，週二公休','對面有免費公共停車場']},
+  {name:'迴轉壽司 Toriton 旭神店', day:'D3 18:00 旭川', ingredients:['北海道人氣迴轉壽司，道產海鮮'], steps:['⚠️ 不接受訂位，週日晚餐常排 1 小時以上','官方 LINE 可查即時等候狀況','有停車場，L.O. 21:30']},
+    {name:'旭川成吉思汗 大黑屋', day:'D2 18:00 旭川', ingredients:['生羊肉不冷凍，招牌羊肩肉','15:00–23:00，L.O. 21:50'], steps:['可訂位：0166-24-2424 或官網線上預約，週六晚上建議先訂','沒有停車場，停附近投幣式']},
+  {name:'旭川拉麵／海鮮', day:'D4 旭川午餐', ingredients:['旭川醬油拉麵','海鮮會席'], steps:['拉麵店多半 10:30–11:00 開門']},
+  {name:'揚げいも（炸馬鈴薯）', day:'D5 美幌峠', ingredients:['道之驛 ぐるっとパノラマ美幌峠 名物'], steps:['配屈斜路湖全景一起吃']},
+  {name:'十勝豚丼', day:'D7 足寄午餐', ingredients:['十勝地區代表：炭烤豬肉＋甜鹹醬汁'], steps:['足寄道之驛周邊找店']},
+  {name:'Higashichitose barbecue', day:'D8 11:05 東千歲', ingredients:['TOMAMU 往定山溪路上的午餐'], steps:['⏳ 確認營業時間與是否需預約']},
+  {name:'湯咖哩／成吉思汗', day:'D9 札幌', ingredients:['札幌兩大代表料理'], steps:['週六晚上熱門店要先訂']}
+];
+const DRIVING_TIPS = [
+  {icon:'🪪', title:'駕照：台灣駕照＋日文譯本', desc:'<b>台灣的國際駕照在日本不能用</b>。在日本開車要帶：<b>台灣駕照正本＋日文譯本＋護照</b>，三樣都要在身上。<br><br>日文譯本到監理站（或監理服務網線上申請）辦，當天就能拿，有效期間跟著入境日算 1 年。租車公司取車時會檢查，少一樣就不能開。'},
+  {icon:'🛣️', title:'ETC 卡與 HEP 高速公路周遊券', desc:'<b>取車時一定要租 ETC 卡</b>，收費站走紫色 ETC 車道（限速 20 km/h 通過），不用現金。<br><br><b>HEP（Hokkaido Expressway Pass）</b>：外國護照限定的高速公路吃到飽，<b>要在租車時跟租車公司一起申請</b>，並且要租 ETC 卡。<br>• 4 天 ¥7,700（普通車）<br>• 7 天 ¥13,500（普通車）<br>• 最多連續 8 天，更長要分段買<br><br><b>本趟會走到的收費高速</b>：D2 札幌→旭川鷹栖（道央道）、D7 足寄→トマム（道東道）、D8 トマム→札幌南（道東道＋道央道）。<br>旭川紋別道（D4 旭川→層雲峽）本身免費。<br>→ 高速日只有 3 天，先用 ドラぷら 試算實際過路費總和再決定買不買，不一定划算。', link:'https://en.driveplaza.com/drawari/hokkaido_expass/'},
+  {icon:'⛽', title:'加油：偏鄉加油站晚上會關', desc:'日本很多加油站是有人服務（フルサービス），跟店員說「<b>レギュラー、満タン</b>」（一般汽油、加滿）即可，可刷卡。<br><br><b>⚠️ 別加錯油</b>：紅色＝レギュラー（一般汽油）、黃色＝ハイオク（高級）、綠色＝軽油（柴油）。租車幾乎都是レギュラー。<br><br><b>⚠️ 偏鄉加油站多半 19:00–20:00 就關，部分週日公休</b>，道東山區不要等到剩 1/4 才找。<br><br><b>本趟關鍵加油點</b>：<br>• D5 出發前 —— 層雲峽／上川確認油量（石北峠長山路）<br>• D7 —— 阿寒湖或足寄加滿，再上道東道<br>• D10 還車前 —— 加滿並保留收據'},
+  {icon:'🦌', title:'蝦夷鹿：道東清晨黃昏最多', desc:'道東（屈斜路、阿寒、三國峠）的國道，清晨和天黑後鹿群常突然衝出來，一隻出現通常後面還有好幾隻。<br><br>看到「鹿注意」黃色標誌就減速，夜間遠光燈照得到的時候多開。撞到鹿車子很容易嚴重損壞。'},
+  {icon:'🐻', title:'棕熊：清晨單獨在林邊要小心', desc:'D3 天沒亮去青池、D7 Onneto 湖都是林邊地形。<br><br>• 帶熊鈴、熊噴霧（熊噴霧不能帶上飛機，要在當地買或租）<br>• 出發前查 ひぐまっぷ 與當地「熊出沒」公告<br>• 人多的熱門景點風險相對低，但清晨人少時風險就上升<br>• 不要留食物在車外、不要餵野生動物'},
+  {icon:'🚃', title:'平交道一律停車', desc:'日本法規：<b>沒有柵欄、沒有號誌的平交道前一定要完全停車，左右確認後再過</b>，就算沒有火車也一樣。北海道鄉間平交道很多，警察會在旁邊抓。'},
+  {icon:'🚗', title:'靠左行駛、右轉讓直行', desc:'跟台灣相反：<b>靠左行駛、駕駛座在右邊</b>，雨刷和方向燈撥桿也左右相反，打方向燈常常變成刷雨刷。<br><br>右轉（跨越對向車道）要讓對向直行車先走。<br><br>速限：一般道路沒標示為 <b>60 km/h</b>，高速公路 80–100 km/h。北海道直線道路很長，測速（ネズミ捕り）非常常見。'},
+  {icon:'🌙', title:'天黑得早：日落約 16:45–17:05', desc:'10 月中的北海道，道東日落約 16:45，札幌約 17:00。17:30 以後山路就全黑了，還有鹿。<br><br>行程已經盡量把長途移動排在白天；如果拍照拖到太晚，後面的山路要更慢開。'},
+  {icon:'❄️', title:'山口清晨可能結霜或初雪', desc:'10 月中旬，三國峠（1,139m）、石北峠、中山峠（835m）清晨氣溫可能低於 0 度，路面結霜、偶爾初雪。<br><br><b>這個季節租車大多還是夏季輪胎</b>。清晨上山前先看「北の道ナビ 峠情報」的氣溫與即時影像，路面白了就不要上去。', link:'https://northern-road.ceri.go.jp/navi/touge/index_touge.htm'},
+  {icon:'🧭', title:'導航：用電話號碼或 MAPCODE', desc:'日本車上導航輸入<b>設施的電話號碼</b>或 <b>MAPCODE</b> 最快，不用打日文地名。飯店、道之驛、景點的電話與 MAPCODE 先整理好。也可以直接用手機 Google Maps。'},
+  {icon:'🅿️', title:'札幌停車', desc:'札幌市區飯店多半沒有自有停車場：<br>• <b>Hotel Gracery Sapporo</b>：P1 機械式（限高 2.0m、離地 15cm）、P2 平面自走約 ¥1,500/晚<br>• <b>JR-EAST Hotel Mets Premier</b>：沒有自有停車場，只能停附近投幣式<br><br>取車後先確認車高，SUV 通常進不了機械式車位。'},
+  {icon:'🚨', title:'發生事故一定要報警（110）', desc:'在日本不管事故多小，<b>都要打 110 報警並讓警察做紀錄</b>，否則租車保險不理賠。接著聯絡租車公司。<br><br>拋錨、爆胎、沒電：JAF 道路救援 <b>#8139</b>（手機撥打），或租車公司的救援專線。'},
+  {icon:'📖', title:'延伸閱讀', desc:'JAF 日本汽車聯盟官網（道路救援、日文譯本相關資訊）', link:'https://www.jaf.or.jp/'}
+];
+function renderDrivingTipsPanel(){
+  const box=document.getElementById('infoDrivingTipsPanel');
+  box.innerHTML = DRIVING_TIPS.map(t=>`
+    <div class="appCard">
+      <div class="appName">${t.icon} ${t.title}</div>
+      <div class="appDesc">${t.desc}</div>
+      ${t.link?`<div class="mapLinks"><a href="${t.link}" target="_blank" rel="noopener">🌐 開啟網站</a></div>`:''}
+    </div>`).join('')
+    + `<p style="font-size:11px;color:var(--ink-3);text-align:center;margin-top:10px">以上為一般性提醒，實際規定請以租車公司合約與當日道路公告為準</p>`;
+}
+
+const STAYS_INFO = [
+  {day:'D1', name:'JR-EAST HOTEL METS PREMIER SAPPORO', mapName:'METS PREMIER', dates:'10/9-10/10', checkin:'⏳ 對照訂房', checkout:'⏳ 對照訂房', arrival:'17:10', arrivalFlag:'✅ 沒問題', onsen:'—', parking:'沒有自有停車場（只能停附近投幣式）→ 這晚還沒取車，不影響', note:'隔天 11:50 才在市中心取車'},
+  {day:'D2-D3', name:'緩慢北海道', mapName:'緩慢北海道', dates:'10/10-10/12', checkin:'⏳ 待填', checkout:'⏳ 待填', arrival:'D2 約 20:50', arrivalFlag:'⏳ 對照入住時間', onsen:'—', parking:'⏳ 待確認', note:'D2 約 20:50 才入住（先確認入住截止時間），21:30 再出門拍聖誕樹銀河'},
+  {day:'D4', name:'層雲閣 Mountain Resort 1923', mapName:'層雲閣', dates:'10/12-10/13', checkin:'15:00', checkout:'10:00', arrival:'15:00', arrivalFlag:'✅ 剛好；⏳ 入住／退房時間要對照訂房確認信', onsen:'✅ 溫泉旅館', parking:'—', note:'D5 清晨 05:50 出發去三國峠，07:50 回來吃早餐'},
+  {day:'D5', name:'屈斜路王子大飯店', mapName:'屈斜路王子', dates:'10/13-10/14', checkin:'⏳ 待確認', checkout:'⏳ 待確認', arrival:'16:10', arrivalFlag:'✅ 一般 15:00 後入住，應該沒問題', onsen:'✅ 有', parking:'✅ 有', note:'D6 04:50 出發去摩周湖日出'},
+  {day:'D6', name:'阿寒湖 鶴雅', mapName:'鶴雅', dates:'10/14-10/15', checkin:'⏳ 待確認', checkout:'⏳ 待確認', arrival:'15:45', arrivalFlag:'✅ 沒問題', onsen:'✅ 有', parking:'✅ 有', note:'⏳ 確認是遊久の里 鶴雅／鶴雅ウイングス／鄙の座 哪一館'},
+  {day:'D7', name:'星野リゾート TOMAMU', mapName:'トマム', dates:'10/15-10/16', checkin:'⏳ 待確認', checkout:'⏳ 待確認', arrival:'14:45', arrivalFlag:'✅ 沒問題', onsen:'—', parking:'✅ 有', note:'🔴 雲海平台 10/13 結束營業（2026 預定），這晚住宿看不到雲海'},
+  {day:'D8', name:'定山溪 有樂草庵（ゆらく草庵）', mapName:'有樂草庵', dates:'10/16-10/17', checkin:'⏳ 待確認', checkout:'⏳ 待確認', arrival:'13:20 寄放行李、17:15 入住', arrivalFlag:'⚠️ 先確認 13:20 能不能寄行李停車；晚餐約 18:00 後才趕得上 19:30 夏燈路', onsen:'✅ 溫泉旅館', parking:'—', note:'D9 05:00 出發拍羊蹄山，08:30 回來吃早餐 → 先確認早餐最晚時段'},
+  {day:'D9', name:'札幌住宿（待確認）', mapName:'Gracery', dates:'10/17-10/18', checkin:'⏳ 待確認', checkout:'⏳ 待確認', arrival:'15:00', arrivalFlag:'⏳', onsen:'—', parking:'⚠️ 這晚手上有車 —— 如果又住 Mets Premier（沒有停車場）要找投幣式，或先還車', note:'還車時間會影響要不要選有停車場的飯店'}
+];
+function renderStaysPanel(){
+  const box=document.getElementById('infoStaysPanel');
+  box.innerHTML = STAYS_INFO.map(s=>`
+    <div class="appCard">
+      <div class="appName">${s.day}　${s.name}</div>
+      <div class="appDesc">${s.dates}　入住 ${s.checkin}　退房 ${s.checkout}</div>
+      <div class="appDesc" style="margin-top:4px">🕐 行程預計到達：${s.arrival}　${s.arrivalFlag}</div>
+      <div class="appDesc" style="margin-top:4px">♨️ 溫泉：${s.onsen}</div>
+      <div class="appDesc" style="margin-top:4px">🅿️ 停車：${s.parking}</div>
+      ${s.note?`<div class="appDesc" style="margin-top:4px">📝 ${s.note}</div>`:''}
+      ${mapLinksHtml(s.mapName)}
+    </div>`).join('')
+    + `<p style="font-size:11px;color:var(--ink-3);text-align:center;margin-top:10px">🔴 TOMAMU 雲海平台 10/13 結束營業；⚠️ ゆらく草庵要先說會晚到並約晚餐；⏳ 札幌兩晚、美瑛兩晚住宿還沒定案</p>`;
+}
+
+const PACKING_LIST = [
+  {cat:'🪪 證件 & 重要事項', items:['護照','台灣駕照正本','駕照日文譯本','Visit Japan Web QR code','信用卡','日圓現金','旅遊平安險／不便險','eSIM／網卡','租車、住宿確認信（離線存一份）']},
+  {cat:'🧥 衣著（清晨接近 0°C、白天約 10–15°C）', items:['發熱衣／發熱褲','底層長袖*3','毛衣或刷毛','輕羽絨外套','防風防水外套','長褲*3','防風防潑水長褲（獨木舟、清晨拍照）','毛帽','手套（可觸控）','圍巾／脖圍','防水健行鞋','襪子（厚）','內衣褲','替換衣物一套（獨木舟用）']},
+  {cat:'🧴 日常盥洗用品', items:['保養品（北海道 10 月很乾）','護唇膏','防曬乳','牙刷','刮鬍刀','常備藥（腸胃藥、止痛藥、暈車藥、感冒藥）']},
+  {cat:'📷 攝影設備', items:['相機','24-70 / 70-200 / 16mm 鏡頭','空拍機（國立公園多數區域禁飛，先查規定）','Insta360','腳架','減光鏡／偏光鏡（拍紅葉、水面）','防水袋（獨木舟）','吹氣球、清潔筆','備用電池（低溫耗電快）']},
+  {cat:'🔌 電器設備', items:['行動電源','筆電','相機充電器','空拍機充電器','Type-C 線*2','SSD','讀卡機','（日本插座跟台灣一樣，不用轉接頭）']},
+  {cat:'🐻 戶外安全', items:['熊鈴','熊噴霧（當地買／租，不能帶上飛機）','頭燈（清晨出發）','暖暖包']},
+  {cat:'🎒 其他', items:['備用眼鏡','購物袋','折疊傘','伴手禮保冷袋（ROYCE、LeTAO）']}
+];
+function loadPackingChecked(){
+  try{ return JSON.parse(localStorage.getItem('hokkaido-packing-checked')||'{}'); }catch(e){ return {}; }
+}
+function savePackingChecked(state){
+  try{ localStorage.setItem('hokkaido-packing-checked', JSON.stringify(state)); }catch(e){}
+}
+const SIM_INFO = [
+  {t:'📶 選 docomo 網路的 eSIM／SIM', d:'北海道偏鄉與山區以 <b>docomo</b> 覆蓋最好，au 次之，SoftBank／樂天在道東山區較容易斷訊。買 eSIM 時看清楚走哪一家的網路。<br><br>本趟是溫泉旅館與飯店為主，住宿都有 Wi-Fi，主要擔心的是移動途中導航。'},
+  {t:'📵 容易斷訊的路段', d:'• D5 三國峠、石北峠山路<br>• D6 國道 241 號（阿寒橫斷道路）部分路段<br>• D5–D6 摩周湖、屈斜路湖周邊山區<br><br>對策：<br>• Google Maps 先把北海道下載成離線地圖<br>• 出發前先開一次本 app，讓它把資料快取下來<br>• 飯店、景點電話與 MAPCODE 先存好，車上導航離線也能用'},
+  {t:'☎️ 日本緊急電話', d:'警察 <b>110</b>（交通事故一定要報）<br>救護車／消防 <b>119</b><br>JAF 道路救援 <b>#8139</b><br>Japan Visitor Hotline（JNTO，24hr，有中文）<b>050-3816-2787</b><br>⏳ 租車公司救援專線 —— 取車後填入'},
+  {t:'🏨 住宿電話', d:'⏳ 待填：層雲閣、屈斜路王子、鶴雅、TOMAMU、ゆらく草庵、札幌飯店<br>建議都存一份，入住前晚到或臨時變動用'}
+];
+function renderSimPanel(){
+  const box=document.getElementById('infoSimPanel');
+  box.innerHTML = SIM_INFO.map(x=>`
+    <div class="appCard">
+      <div class="appName">${x.t}</div>
+      <div class="appDesc">${x.d}</div>
+    </div>`).join('');
+}
+
+function renderPackingPanel(){
+  const box=document.getElementById('infoPackingPanel');
+  const checked = loadPackingChecked();
+  const total = PACKING_LIST.reduce((n,c)=>n+c.items.length,0);
+  const doneCount = Object.values(checked).filter(Boolean).length;
+  box.innerHTML = `<p style="font-size:12px;color:var(--ink-2);margin:0 0 10px">已勾選 ${doneCount} / ${total} 項</p>`
+    + PACKING_LIST.map(c=>`
+    <div class="appCard">
+      <div class="appName" style="margin-bottom:6px">${c.cat}</div>
+      ${c.items.map(it=>{
+        const key=c.cat+'|'+it;
+        const isChecked = !!checked[key];
+        return `<label style="display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13.5px;color:${isChecked?'var(--ink-3)':'var(--ink)'};text-decoration:${isChecked?'line-through':'none'}">
+          <input type="checkbox" class="packingCheck" data-key="${key.replace(/"/g,'&quot;')}" ${isChecked?'checked':''} style="width:17px;height:17px;flex-shrink:0">
+          ${it}
+        </label>`;
+      }).join('')}
+    </div>`).join('')
+    + `<p style="font-size:11px;color:var(--ink-3);text-align:center;margin-top:6px">勾選狀態只存在這台裝置本機，換裝置或清除瀏覽器資料會重置</p>`;
+  box.querySelectorAll('.packingCheck').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      const st = loadPackingChecked();
+      st[cb.dataset.key] = cb.checked;
+      savePackingChecked(st);
+      renderPackingPanel();
+  renderSimPanel();
+    });
+  });
+}
+
+function renderRecipesPanel(){
+  const box=document.getElementById('infoRecipesPanel');
+  box.innerHTML = `<div class="dateLabel" style="margin-top:4px">🍽️ 行程中的餐廳與在地美食</div>` + FOOD_LIST.map(r=>`
+      <div class="recipeCard">
+        <div class="recipeName">${r.name}<span class="recipeTime">${r.day}</span></div>
+        <div class="recipeSection"><b>重點</b>${r.ingredients.join('、')}</div>
+        <div class="recipeSection"><b>備註</b><ol>${r.steps.map(x=>`<li>${x}</li>`).join('')}</ol></div>
+      </div>`).join('');
+}
+
+function renderMarketsPanel(){
+  const box=document.getElementById('infoMarketsPanel');
+  const tableRows = MARKETS_COMPARE.map(r=>`<tr><td>${r.label}</td><td>${r.a}</td><td>${r.b}</td><td>${r.c}</td></tr>`).join('');
+  const buysHtml = MARKET_BUYS.map(g=>`
+    <div class="marketBuyGroup">
+      <div class="marketBuyCat">${g.category}<span class="marketBuyStore">${g.store}</span></div>
+      <div class="marketBuyItems">${g.items.join('、')}</div>
+    </div>`).join('');
+  box.innerHTML = `
+    <div class="marketTableWrap"><table class="marketTable">
+      <thead><tr><th></th><th>Seicomart</th><th>7-11／Lawson／全家</th><th>AEON／Coop</th></tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table></div>
+    <div class="dateLabel" style="margin-top:20px">🛍️ 必買推薦（依種類分類）</div>
+    ${buysHtml}`;
+}
+
+function renderAppsPanel(){
+  const box=document.getElementById('infoAppsPanel');
+  const categories=[...new Set(TRIP_APPS.map(a=>a.category))];
+  box.innerHTML = categories.map(cat=>`
+    <div class="appCatLabel">${cat}</div>
+    ${TRIP_APPS.filter(a=>a.category===cat).map(a=>`
+      <div class="appCard">
+        <div class="appName">${a.name}</div>
+        <div class="appDesc">${a.desc}</div>
+        <div class="mapLinks">${a.web ? `<a href="${a.web}" target="_blank" rel="noopener">🌐 開啟網站</a>` : `<a href="${a.ios}" target="_blank" rel="noopener">🍎 iOS</a><a href="${a.android}" target="_blank" rel="noopener">🤖 Android</a>`}</div>
+      </div>`).join('')}
+  `).join('') + `<p style="font-size:11px;color:var(--ink-3);text-align:center;margin-top:10px">連結會開啟官方網站，實際內容請以官網為準</p>`;
+}
+
+document.getElementById('btnAddExpense').onclick=()=>openExpenseForm();
+document.getElementById('btnAddDay').onclick=()=>addDay();
+
+document.querySelectorAll('.tabbtn').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('.tabbtn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    const v=b.dataset.view;
+    document.getElementById('view-split').hidden = v!=='split';
+    document.getElementById('view-itinerary').hidden = v!=='itinerary';
+    document.getElementById('view-info').hidden = v!=='info';
+  };
+});
+document.querySelectorAll('#infoSubTabs .chip').forEach(c=>{
+  c.onclick=()=>{
+    document.querySelectorAll('#infoSubTabs .chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    const sub=c.dataset.sub;
+    document.getElementById('infoWeatherPanel').hidden = sub!=='weather';
+    document.getElementById('infoAppsPanel').hidden = sub!=='apps';
+    document.getElementById('infoMarketsPanel').hidden = sub!=='markets';
+    document.getElementById('infoRecipesPanel').hidden = sub!=='recipes';
+    document.getElementById('infoDrivingTipsPanel').hidden = sub!=='drivingtips';
+    document.getElementById('infoStaysPanel').hidden = sub!=='stays';
+    document.getElementById('infoPackingPanel').hidden = sub!=='packing';
+    document.getElementById('infoSimPanel').hidden = sub!=='sim';
+  };
+});
+document.getElementById('btnAddItem').onclick=()=>openItemForm(null);
+document.getElementById('btnReset').onclick=async ()=>{
+  if(!confirm('這會清掉你目前輸入的所有行程，改回範例資料，確定嗎？')) return;
+  STATE=JSON.parse(JSON.stringify(SEED));
+  currentDayId=STATE.days[0].id;
+  await saveState();
+  renderAll();
+};
+
+(async function init(){
+  const splashStart = Date.now();
+  STATE = await loadState();
+  if(!STATE.days.length) STATE=JSON.parse(JSON.stringify(SEED));
+  const today = new Date();
+  const todayStr = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  const matchDay = STATE.days.find(d=>d.date===todayStr);
+  currentDayId = matchDay ? matchDay.id : STATE.days[0].id;
+  ensureSplitState();
+  document.getElementById('view-itinerary').hidden=false;
+  renderWeatherPlaceSelect();
+  renderAll();
+  renderWeather();
+  renderSplit();
+  renderAppsPanel();
+  renderMarketsPanel();
+  renderRecipesPanel();
+  renderDrivingTipsPanel();
+  renderStaysPanel();
+  renderPackingPanel();
+  renderSimPanel();
+  initDaysSync();
+  const minShow = 1200;
+  const elapsed = Date.now() - splashStart;
+  setTimeout(()=>{
+    const splash=document.getElementById('splashScreen');
+    splash.classList.add('fade-out');
+    setTimeout(()=>splash.remove(), 650);
+  }, Math.max(0, minShow-elapsed));
+})();
+
+function syncTabbarHeight(){
+  const tb=document.getElementById('tabbar');
+  if(!tb) return;
+  document.documentElement.style.setProperty('--tabbar-h', tb.offsetHeight+'px');
+}
+window.addEventListener('load', syncTabbarHeight);
+window.addEventListener('resize', syncTabbarHeight);
+window.addEventListener('orientationchange', ()=>setTimeout(syncTabbarHeight,200));
+syncTabbarHeight();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('service-worker.js').then(reg=>{
+      // 每次開啟主動檢查是否有新版，有的話下次開啟就會生效
+      reg.update().catch(()=>{});
+    }).catch(()=>{});
+  });
+}
+</script>
+</body>
+
+</html>
