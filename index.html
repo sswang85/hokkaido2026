@@ -187,6 +187,7 @@
   .tabbtn.active{color:var(--ink);background:rgba(255,255,255,0.5)}
   [hidden]{display:none!important}
   #view-info .appName,#view-info .marketBuyCat{font-size:16px!important;color:#A2421A!important}
+  #itemList .item .ttl,#itemList .item .time,#dayHeroLabel{color:#A2421A!important;opacity:1!important}
   #splashScreen{position:fixed;inset:0;z-index:9999;background:#0B0F11;overflow:hidden;transition:opacity .6s ease}
   #splashScreen.fade-out{opacity:0;pointer-events:none}
   #splashScreen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -264,6 +265,7 @@
       <div class="chip" data-sub="apps">📱 常用 App</div>
       <div class="chip" data-sub="drivingtips">🚗 自駕須知</div>
       <div class="chip" data-sub="markets">🏪 超商伴手禮</div>
+      <div class="chip" data-sub="souvenir">🎁 伴手禮</div>
       <div class="chip" data-sub="sim">📶 電信/網路</div>
       <div class="chip" data-sub="packing">🧳 行李清單</div>
     </div>
@@ -274,6 +276,7 @@
     <div id="infoAppsPanel" hidden></div>
     <div id="infoDrivingTipsPanel" hidden></div>
     <div id="infoMarketsPanel" hidden></div>
+    <div id="infoSouvenirPanel" hidden></div>
     <div id="infoSimPanel" hidden></div>
     <div id="infoPackingPanel" hidden></div>
   </section>
@@ -579,15 +582,18 @@ const SEED = {days:[
 {
   id:'d8', label:'D8', date:'2026-10-16', sub:'TOMAMU → 東千歲 → 定山溪',
   items:[
-    {id:'d8i1', time:'09:30', type:'transit', title:'星野Tomamu → Higashichitose barbecue', from:'星野Tomamu', to:'Higashichitose barbecue', durationMin:90},
-    {id:'d8i2', time:'11:05', type:'meal', title:'Higashichitose barbecue', durationMin:45},
-    {id:'d8i3', time:'11:50', type:'transit', title:'Higashichitose barbecue → 定山溪有樂草庵', from:'Higashichitose barbecue', to:'定山溪有樂草庵', durationMin:90},
-    {id:'d8i4', time:'13:30', type:'sight', title:'二見吊橋散步', durationMin:60, note:'13:20 到旅館先寄放行李、停車，再走過去（約 10 分鐘）'},
-    {id:'d8i5', time:'14:35', type:'other', title:'Hirafu Lawson', icon:'📍', noTime:true, note:'⚠️ ヒラフ（Hirafu）在二世谷，離定山溪單程約 1.5 小時，排在這裡不合理 —— 是不是要放在 D9 拍羊蹄山那天？或是指定山溪的 Lawson？'},
-    {id:'d8i6', time:'14:45', type:'sight', title:'Friluftsliv 獨木舟/SUP', durationMin:135, note:'✅ 15:00 場次，14:45 報到｜集合：埜のてらす 內 野あそびベース フリルフスリフ（札幌市南區定山溪溫泉西4丁目371）｜約 90–120 分鐘｜📷 日落 16:53 會在河上 —— 相機要有防水袋，10 月中河水很冰，帶保暖衣物與替換衣物｜⏳ 預約編號待填'},
-    {id:'d8i7', time:'16:53', type:'photo', title:'Sunset', note:'這時人在河上'},
-    {id:'d8i8', time:'17:15', type:'sleep', title:'Checkin 定山溪有樂草庵', noTime:true, note:'⏳ 旅館晚餐時段要先約好，建議 18:00 以後，才來得及 19:30 去夏燈路'},
-    {id:'d8i9', time:'19:30', type:'sight', title:'夏燈路（定山溪神社／岩戶觀音堂／定山源泉公園）', note:'✅ 2026 年辦到 10/31｜9–10 月 18:00–21:30（最後入場 21:15）｜定山溪神社有投影秀、定山源泉公園約 200 盞燈籠＋足湯'}
+    {id:'d8i0', time:'07:00', type:'sight', title:'水之教堂', icon:'🚩', note:'早上開放 6:30–7:30，最後入場 7:15 → 7:00 到剛好，別晚到｜不用預約｜清晨的水面倒影最安靜'},
+    {id:'d8i1', time:'07:30', type:'meal', title:'星野森林早餐', durationMin:90, note:'吃完順便 check-out（最晚 11:00），9:30 出發'},
+    {id:'d8i2', time:'09:30', type:'transit', title:'星野Tomamu → Higashichitose barbecue', from:'星野Tomamu', to:'Higashichitose barbecue', durationMin:90, arrivalTime:'11:00', note:'走道東道（高速），約 120 公里'},
+    {id:'d8i3', time:'11:05', type:'meal', title:'Higashichitose barbecue', durationMin:45, note:'炭火烤雞｜10:30–17:00，週三公休（10/16 週五 OK）｜雞肉賣完就打烊，11:00 到剛好'},
+    {id:'d8i4', time:'11:50', type:'transit', title:'Higashichitose barbecue → 定山溪有樂草庵', from:'Higashichitose barbecue', to:'定山溪有樂草庵', durationMin:90, arrivalTime:'13:20'},
+    {id:'d8i5', time:'13:30', type:'sight', title:'二見吊橋散步', durationMin:60, note:'先到旅館寄放行李、停車，再走過去（約 10 分鐘）'},
+    {id:'d8i6', time:'14:45', type:'sight', title:'Friluftsliv 獨木舟/SUP', durationMin:90, note:'15:00 場次，14:45 報到｜集合：埜のてらす 內 野あそびベース フリルフスリフ（定山溪溫泉西4丁目）｜相機要有防水袋，10 月河水很冰，帶保暖和替換衣物｜⏳ 預約編號待填'},
+    {id:'d8i7', time:'16:53', type:'photo', title:'Sunset'},
+    {id:'d8i8', time:'17:15', type:'sleep', title:'Checkin 定山溪有樂草庵', note:'旅館最晚 19:00 前要 check-in'},
+    {id:'d8i9', time:'18:15', type:'sight', title:'夏燈路（定山溪神社／岩戶觀音堂／定山源泉公園）', durationMin:85, note:'2026 年辦到 10/31｜18:00–21:30（最後入場 21:15）｜神社投影秀、源泉公園約 200 盞燈籠＋足湯｜19:40 前回旅館'},
+    {id:'d8i10', time:'19:45', type:'meal', title:'有樂草庵懷石料理', durationMin:120},
+    {id:'d8i11', time:'22:30', type:'meal', title:'有樂草庵拉麵宵夜'}
   ]
 },
 {
@@ -695,7 +701,7 @@ function compressImageFile(file, maxDim=560, quality=0.6){
 
 function fmtT(d){ if(!d||isNaN(d)) return '--:--'; return d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Tokyo'}); }
 
-const SEED_VERSION = '2026-10-04zj';
+const SEED_VERSION = '2026-10-09b';
 function loadState(){
   let state=null;
   try{
@@ -1397,25 +1403,50 @@ function renderStaysPanel(){
 
 
 const PACKING_LIST = [
-  {cat:'🪪 證件 & 重要事項', items:['護照','台灣駕照正本','駕照日文譯本','Visit Japan Web QR code','信用卡','日圓現金','旅遊平安險／不便險','eSIM／網卡','租車、住宿確認信（離線存一份）']},
-  {cat:'🧥 衣著（清晨接近 0°C、白天約 10–15°C）', items:['發熱衣／發熱褲','底層長袖*3','毛衣或刷毛','輕羽絨外套','防風防水外套','長褲*3','防風防潑水長褲（獨木舟、清晨拍照）','毛帽','手套（可觸控）','圍巾／脖圍','防水健行鞋','襪子（厚）','內衣褲','替換衣物一套（獨木舟用）']},
-  {cat:'🧴 日常盥洗用品', items:['保養品（北海道 10 月很乾）','護唇膏','防曬乳','牙刷','刮鬍刀','常備藥（腸胃藥、止痛藥、暈車藥、感冒藥）']},
-  {cat:'📷 攝影設備', items:['相機','24-70 / 70-200 / 16mm 鏡頭','空拍機（國立公園多數區域禁飛，先查規定）','Insta360','腳架','減光鏡／偏光鏡（拍紅葉、水面）','防水袋（獨木舟）','吹氣球、清潔筆','備用電池（低溫耗電快）']},
-  {cat:'🔌 電器設備', items:['行動電源','筆電','相機充電器','空拍機充電器','Type-C 線*2','SSD','讀卡機','（日本插座跟台灣一樣，不用轉接頭）']},
-  {cat:'🐻 戶外安全', items:['熊鈴','熊噴霧（當地買／租，不能帶上飛機）','頭燈（清晨出發）','暖暖包']},
-  {cat:'🎒 其他', items:['備用眼鏡','購物袋','折疊傘','伴手禮保冷袋（ROYCE、LeTAO）']}
+  {cat:'證件 & 重要事項', items:['護照（大於六個月）','台灣駕照／日本翻譯駕照','旅遊平安險／不便險','網卡（可以打電話）','信用卡（預借現金密碼）','日幣']},
+  {cat:'衣著', items:['內褲*3','襪子*3','發熱褲*1','短T shirt*1','底層長袖*2','襯衫*2','Barbour','衝鋒衣','長褲*3','防風防潑水長褲*1','帽子','毛巾','短褲','太陽眼鏡','泳褲']},
+  {cat:'日常盥洗用品', items:['清潔用品（洗面乳 前導液 化妝水 精華液 乳液 護髮乳安）','防曬乳','牙刷牙套','小包衛生紙','指甲剪','刮鬍刀']},
+  {cat:'電器設備', items:['筆電','行動電源','相機電器（充電座&電池）','空拍機電器（充電座&電池）','耳機','typeC*2','USB*1','耳機線*1']},
+  {cat:'攝影設備', items:['相機','相機2470/70200/16鏡頭','空拍機（減光鏡&槳夜）','Insta360 go ultra','PD快扣','腳架','鏡頭濾鏡（減光鏡/黑柔鏡）','閃燈/閃燈支架','吹氣球 清潔筆']},
+  {cat:'其他', items:['備用眼鏡','袋子','雨傘','電子秤','衣架*5 曬衣夾*5','洗衣肥皂','常備藥']}
 ];
+const PACKING_TODO = ['日幣','Barbour','洗衣肥皂','常備藥'];
 function loadPackingChecked(){
-  try{ return JSON.parse(localStorage.getItem('hokkaido-packing-checked')||'{}'); }catch(e){ return {}; }
+  let st={}; try{ st=JSON.parse(localStorage.getItem('hokkaido-packing-checked2')||'{}'); }catch(e){}
+  PACKING_LIST.forEach(c=>c.items.forEach(it=>{const k=c.cat+'|'+it; if(st[k]===undefined) st[k]=!PACKING_TODO.includes(it);}));
+  return st;
 }
 function savePackingChecked(state){
-  try{ localStorage.setItem('hokkaido-packing-checked', JSON.stringify(state)); }catch(e){}
+  try{ localStorage.setItem('hokkaido-packing-checked2', JSON.stringify(state)); }catch(e){}
 }
 const SIM_INFO = [
   {t:'📶 選 docomo 網路的 eSIM／SIM', d:'北海道偏鄉與山區以 <b>docomo</b> 覆蓋最好，au 次之，SoftBank／樂天在道東山區較容易斷訊。買 eSIM 時看清楚走哪一家的網路。<br><br>本趟是溫泉旅館與飯店為主，住宿都有 Wi-Fi，主要擔心的是移動途中導航。'},
   {t:'📵 容易斷訊的路段', d:'• D5 三國峠、石北峠山路<br>• D6 國道 241 號（阿寒橫斷道路）部分路段<br>• D5–D6 摩周湖、屈斜路湖周邊山區<br><br>對策：<br>• Google Maps 先把北海道下載成離線地圖<br>• 出發前先開一次本 app，讓它把資料快取下來<br>• 飯店、景點電話與 MAPCODE 先存好，車上導航離線也能用'},
   {t:'☎️ 日本緊急電話', d:'警察 <b>110</b>（交通事故一定要報）<br>救護車／消防 <b>119</b><br>JAF 道路救援 <b>#8139</b><br>Japan Visitor Hotline（JNTO，24hr，有中文）<b>050-3816-2787</b><br>⏳ 租車公司救援專線 —— 取車後填入'},
   {t:'🏨 住宿電話', d:'⏳ 待填：層雲閣、屈斜路王子、鶴雅、TOMAMU、ゆらく草庵、札幌飯店<br>建議都存一份，入住前晚到或臨時變動用'}
+];
+const SOUVENIR_LIST = [
+  {sec:'沿途限定（遇到就買）', items:[
+    {title:'D3 美瑛｜Ferme La Terre 牛奶夾心餅（ミルクサンド）', where:'Ferme La Terre 店內', keep:'常溫', info:['美瑛牛奶做的夾心餅乾，本店限定的奶油起司三明治也有名','午餐吃完順便在隔壁商店買']},
+    {title:'D3 美瑛｜美瑛選果', where:'美瑛站旁 JA 直營', keep:'常溫', info:['美瑛小麥做的麵粉、玉米湯、在地果醬','新鮮蔬果不能帶回台灣，只買加工品']},
+    {title:'D2–D4 旭川｜旭豆', where:'旭川 AEON／站前', keep:'常溫', info:['共成製菓的砂糖黃豆，旭川百年老牌零嘴','很輕、不怕壓，適合大量分送']},
+    {title:'D5 北見｜清月 赤いサイロ', where:'清月本店、北見市區', keep:'常溫', info:['北見最有名的起司小蛋糕，常常中午前賣完','早點買，晚了可能賣完，機場不一定有']},
+    {title:'D5 北見｜薄荷油（ハッカ油）', where:'北見薄荷紀念館、北見市區', keep:'常溫', info:['北見曾是世界薄荷產地，薄荷油噴霧提神、防蚊都好用','液體 100ml 以內才能放隨身行李，大罐放託運']},
+    {title:'D6–D7 阿寒湖｜綠球藻羊羹（まりも羊羹）', where:'阿寒湖溫泉街', keep:'常溫', info:['綠色小球裝的羊羹，用牙籤戳破就會剝開','溫泉街的愛努木雕、刺繡也很適合帶']}
+  ]},
+  {sec:'北海道經典（札幌、新千歲都買得到）', items:[
+    {title:'白色戀人（石屋製菓）', where:'新千歲、大丸、超市', keep:'常溫', info:['北海道最經典的白巧克力夾心餅','到處都有，留到最後一天機場再買就好']},
+    {title:'ROYCE 生巧克力', where:'新千歲、大丸', keep:'冷藏', info:['招牌是「オーレ」牛奶口味，新千歲有 ROYCE 巧克力工廠','要冷藏，最後一天在機場買，結帳時跟店員要保冷袋']},
+    {title:'六花亭 葡萄奶油夾心餅（マルセイバターサンド）', where:'新千歲、大丸、六花亭札幌本店', keep:'常溫', info:['葡萄乾奶油夾心，冷藏後吃更好吃','很多人覺得比白色戀人更好吃']},
+    {title:'LeTAO 雙層起司蛋糕（ドゥーブルフロマージュ）', where:'新千歲、大丸', keep:'冷凍', info:['小樽來的招牌起司蛋糕，冷凍盒裝','機場買，到台灣約 6 小時內放進冰箱']},
+    {title:'きのとや 札幌農學校牛奶餅乾', where:'新千歲、大丸', keep:'常溫', info:['北海道牛奶餅乾，小包裝好分送','新千歲還有現烤起司塔，當場吃']},
+    {title:'Calbee 薯條三兄弟（じゃがポックル）', where:'新千歲、札幌超市', keep:'常溫', info:['北海道限定的薯條餅乾','機場常大排隊，看到有貨就先買']},
+    {title:'北菓樓 夢不思議泡芙', where:'大丸、新千歲', keep:'當天吃', info:['大泡芙，賞味期限只有當天','只能在北海道吃，不適合帶回台灣']}
+  ]},
+  {sec:'注意事項', items:[
+    {title:'這些不能帶回台灣', where:'', keep:'', info:['肉類製品（成吉思汗羊肉、肉乾、香腸、含肉塊的泡麵或湯咖哩調理包）一律禁止，被查到罰款很重','新鮮水果、蔬菜、馬鈴薯也不能帶，只買加工品']},
+    {title:'免稅', where:'', keep:'', info:['同一家店同一天買滿 ¥5,000（未稅）可退稅，要出示護照','食品類免稅會封袋，在日本境內不能拆']}
+  ]}
 ];
 function renderSimPanel(){
   const box=document.getElementById('infoSimPanel');
@@ -1523,6 +1554,18 @@ function renderKoyoPanel(){
       </div>`;}).join('');
 }
 
+function renderSouvenirPanel(){
+  const box=document.getElementById('infoSouvenirPanel');
+  const cell=(t)=>`<div style="background:var(--card-2);border-radius:10px;padding:6px 8px;text-align:center;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;line-height:1.35">${t}</div>`;
+  box.innerHTML = SOUVENIR_LIST.map(g=>`
+    <div class="dateLabel" style="margin-top:14px">${g.sec}</div>
+    ${g.items.map(r=>`
+      <div class="appCard">
+        <div class="appName" style="font-size:16px">${r.title}</div>
+        ${r.where?`<div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:8px;margin-top:8px">${cell(r.where)}${cell(r.keep)}</div>`:''}
+        <div class="appDesc" style="margin-top:8px;line-height:1.7">${r.info.join('<br>')}</div>
+      </div>`).join('')}`).join('');
+}
 function renderMarketsPanel(){
   const box=document.getElementById('infoMarketsPanel');
   const tableRows = MARKETS_COMPARE.map(r=>`<tr><td>${r.label}</td><td>${r.a}</td><td>${r.b}</td><td>${r.c}</td></tr>`).join('');
@@ -1575,6 +1618,7 @@ document.querySelectorAll('#infoSubTabs .chip').forEach(c=>{
     document.getElementById('infoAppsPanel').hidden = sub!=='apps';
     document.getElementById('infoKoyoPanel').hidden = sub!=='koyo';
     document.getElementById('infoMarketsPanel').hidden = sub!=='markets';
+    document.getElementById('infoSouvenirPanel').hidden = sub!=='souvenir';
     document.getElementById('infoRecipesPanel').hidden = sub!=='recipes';
     document.getElementById('infoDrivingTipsPanel').hidden = sub!=='drivingtips';
     document.getElementById('infoStaysPanel').hidden = sub!=='stays';
@@ -1605,6 +1649,7 @@ document.getElementById('btnReset').onclick=async ()=>{
   renderSplit();
   renderAppsPanel();
   renderMarketsPanel();
+  renderSouvenirPanel();
   renderKoyoPanel();
   renderRecipesPanel();
   renderDrivingTipsPanel();
